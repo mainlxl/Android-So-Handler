@@ -55,7 +55,7 @@ class LoadLibraryVisitor extends ClassVisitor {
     AnnotationVisitor visitAnnotation(final String descriptor, final boolean visible) {
         if (!visible && !isClassSkip && ANNOTATION.equals(descriptor)) {
             isClassSkip = true;
-            println "类${className} isClassSkip = ${isClassSkip} ,注解信息 descriptor=${descriptor} , visible=$visible"
+//            println "类${className} isClassSkip = ${isClassSkip} ,注解信息 descriptor=${descriptor} , visible=$visible"
         }
         return super.visitAnnotation(descriptor, visible);
     }
@@ -81,9 +81,9 @@ class LoadLibraryVisitor extends ClassVisitor {
                 if (!visible) {
                     isMethodSkip = ANNOTATION.equals(annotationDesc)
                 }
-                if(isMethodSkip){
-                    println "方法${className}.${name} 注解 isMethodSkip = ${isMethodSkip} , descriptor=${annotationDesc} , visible=$visible"
-                }
+//                if(isMethodSkip){
+//                    println "方法${className}.${name} 注解 isMethodSkip = ${isMethodSkip} , descriptor=${annotationDesc} , visible=$visible"
+//                }
                 return super.visitAnnotation(annotationDesc, visible)
             }
 
@@ -94,7 +94,7 @@ class LoadLibraryVisitor extends ClassVisitor {
                         && LoadLibraryVisitor.TARGET_FLAG.equals(owner) //
                         && (LoadLibraryVisitor.LOAD_LIBRARY.equals(methodName) || LoadLibraryVisitor.LOAD.equals(methodName))) {
                     owner = LoadLibraryVisitor.SO_LOAD_HOOK
-                    println "[So Load Hook到目标类]: ${className}.${methodName}"
+//                    println "[So Load Hook到目标类]: ${className}.${methodName}"
                 }
                 super.visitMethodInsn(opcode, owner, methodName, methodDesc, itf);
             }

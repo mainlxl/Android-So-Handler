@@ -21,7 +21,7 @@ class SoFileVariantAction(val variantName: String, val extension: SoFileExtensio
     }
 
     //debug -> intermediates\merged_native_libs\debug\out\lib
-    private fun buildMergedNativeLibsFile(variantName: String): File {
+    public fun buildMergedNativeLibsFile(variantName: String): File {
         return FileUtils.join(intermediatesDir, "merged_native_libs", variantName, "out", "lib")
     }
 

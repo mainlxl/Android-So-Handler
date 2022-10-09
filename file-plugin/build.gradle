@@ -4,8 +4,8 @@ plugins {
 }
 
 repositories {
-    jcenter()
-    google()
+    maven { url "https://maven.aliyun.com/repository/jcenter" }
+    maven { url "https://maven.aliyun.com/repository/google" }
     mavenCentral()
 }
 
@@ -21,8 +21,8 @@ dependencies {
     implementation gradleApi()
     //groovy sdk
     implementation localGroovy()
-    compileOnly "com.android.tools.build:gradle:4.1.1"
-    compileOnly "com.android.tools.build:gradle-api:4.1.1"
+    compileOnly "com.android.tools.build:gradle:$ANDROID_GRADLE_VERSION"
+    compileOnly "com.android.tools.build:gradle-api:$ANDROID_GRADLE_VERSION"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 

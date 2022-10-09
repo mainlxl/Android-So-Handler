@@ -1,16 +1,18 @@
 package com.imf.plugin.so
 
 import com.android.build.api.transform.*
+import com.android.build.gradle.internal.pipeline.ExtendedContentType
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.ide.common.internal.WaitableExecutor
 import com.android.utils.FileUtils
+import com.google.common.collect.ImmutableSet
 import java.io.File
 
 class SoFileTransform(val extension: SoFileExtensions, val intermediatesDir: File) : Transform() {
     override fun getName(): String = "soFileTransform"
 
     override fun getInputTypes(): MutableSet<QualifiedContent.ContentType> {
-        return TransformManager.CONTENT_NATIVE_LIBS
+        return ImmutableSet.of(ExtendedContentType.NATIVE_LIBS)
     }
 
     override fun getScopes(): MutableSet<in QualifiedContent.Scope> = TransformManager.SCOPE_FULL_PROJECT;

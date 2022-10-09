@@ -8,11 +8,12 @@
  * SoFileAttachMergeTaskPlugin则在指定文件夹中处理
  */
 //apply plugin: 'SoFileTransformPlugin'
-apply plugin: 'SoFileAttachMergeTaskPlugin'
+//apply plugin: 'SoFileAttachMergeTaskPlugin'
+apply plugin: 'ApkSoFileAdjustPlugin'
 SoFileConfig {
     useAppendActionMethod = false
     //设置debug下不删除与压缩so库
-//        excludeBuildTypes = ['debug']
+//    excludeBuildTypes = ['debug']
 
     /**
      * 强制保留所有依赖

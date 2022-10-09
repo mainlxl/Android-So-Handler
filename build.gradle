@@ -2,8 +2,8 @@
 buildscript {
     repositories {
         maven { url uri("${rootDir}/maven") }
-        google()
-        jcenter()
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$ANDROID_GRADLE_VERSION"
@@ -19,8 +19,8 @@ buildscript {
 allprojects {
     repositories {
         maven { url uri("${rootDir}/maven") }
-        google()
-        jcenter()
+        maven { url "https://maven.aliyun.com/repository/google" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
         maven { url "https://raw.githubusercontent.com/Android-Mainli/Maven/master" }
     }
 }

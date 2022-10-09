@@ -178,7 +178,7 @@ class SoHandle(variantName: String, val extension: SoFileExtensions, val assetsO
     }
 
     private fun log(message: String) {
-        println(message)
+//        println(message)
     }
 
     //liblog.so -> log

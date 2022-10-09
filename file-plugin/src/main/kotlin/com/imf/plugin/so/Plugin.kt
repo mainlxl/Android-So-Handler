@@ -4,7 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.android.utils.FileUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.io.File
+import java.io.*
 import java.util.stream.Collectors
 
 abstract class SoFilePlugin : Plugin<Project> {
@@ -16,7 +16,7 @@ abstract class SoFilePlugin : Plugin<Project> {
         android = project.extensions.getByType(AppExtension::class.java)
         intermediatesDir = FileUtils.join(project.buildDir, "intermediates")
         project.afterEvaluate {
-            afterProjectEvaluate(it);
+            afterProjectEvaluate(it)
         }
     }
 
@@ -28,8 +28,8 @@ abstract class SoFilePlugin : Plugin<Project> {
             pluginConfig.exe7zName = "7z.exe"
         }
         val minSdkVersion: Int = defaultConfig.minSdkVersion?.apiLevel ?: 0
-        pluginConfig.neededRetainAllDependencies = pluginConfig.forceNeededRetainAllDependencies
-                ?: (minSdkVersion <= 23)
+        pluginConfig.neededRetainAllDependencies =
+            pluginConfig.forceNeededRetainAllDependencies ?: (minSdkVersion <= 23)
     }
 }
 
@@ -40,6 +40,7 @@ class SoFileTransformPlugin : SoFilePlugin() {
     }
 }
 
+@Deprecated("")
 class SoFileAttachMergeTaskPlugin : SoFilePlugin() {
     override fun afterProjectEvaluate(project: Project) {
         super.afterProjectEvaluate(project)
@@ -52,23 +53,75 @@ class SoFileAttachMergeTaskPlugin : SoFilePlugin() {
         }.collect(Collectors.toSet())
         if (!buildTypes.isNullOrEmpty()) {
             val tasks = project.tasks
-            buildTypes!!.forEach { variantName: String ->
-                val upperCaseName = upperCase(variantName)
+            buildTypes.forEach { variantName: String ->
+                val upperCaseName = variantName.capitalize()
                 val taskName = "merge${upperCaseName}NativeLibs"
                 val mergeNativeLibsTask = tasks.findByName(taskName)
                 if (mergeNativeLibsTask == null) {
                     tasks.forEach {
                         if (it.name.equals(taskName)) {
-                            it.doLast(SoFileVariantAction(variantName, pluginConfig, intermediatesDir))
+                            it.doLast(
+                                SoFileVariantAction(
+                                    variantName, pluginConfig, intermediatesDir
+                                )
+                            )
                         }
                     }
                 } else {
-                    mergeNativeLibsTask.doLast(SoFileVariantAction(variantName, pluginConfig, intermediatesDir))
+                    mergeNativeLibsTask.doLast(
+                        SoFileVariantAction(
+                            variantName, pluginConfig, intermediatesDir
+                        )
+                    )
                 }
             }
         }
     }
-
-    private fun upperCase(str: String): String = str.substring(0, 1).toUpperCase() + str.substring(1)
 }
 
+
+class ApkSoFileAdjustPlugin : SoFilePlugin() {
+    override fun afterProjectEvaluate(project: Project) {
+        super.afterProjectEvaluate(project)
+        android.applicationVariants.all { variant ->
+            val variantName = variant.name
+            createTask(project, variantName)
+        }
+
+        android.buildTypes.all { buildType ->
+            val buildTypeName = buildType.name
+            createTask(project, buildTypeName)
+        }
+
+        android.productFlavors.all { flavor ->
+            val flavorName = flavor.name
+            createTask(project, flavorName)
+        }
+    }
+
+    fun createTask(project: Project, variantName: String) {
+        val capitalizeVariantName = variantName.capitalize()
+        val taskName = "ApkSoFileAdjust${capitalizeVariantName}"
+        val excludeBuildTypes = pluginConfig.excludeBuildTypes
+        if (!excludeBuildTypes.isNullOrEmpty()) {
+            if (excludeBuildTypes.contains(variantName)) {
+                return
+            }
+        }
+        if (project.tasks.findByPath(taskName) == null) {
+            val task = project.tasks.create(
+                taskName,
+                ApkSoLibStreamlineTask::class.java,
+                android,
+                pluginConfig,
+                intermediatesDir,
+                variantName
+            )
+            task.group = "Build"
+            task.description = "进行so共享库处理"
+            task.dependsOn.add("package${capitalizeVariantName}")
+            project.tasks.findByPath("assemble${capitalizeVariantName}")?.dependsOn?.add(task)
+
+        }
+    }
+}

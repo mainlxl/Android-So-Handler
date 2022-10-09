@@ -7,7 +7,7 @@ import java.io.FileOutputStream
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 
-class AssetsOutDestManager(val variantName: String, val intermediatesDir: File) {
+open class AssetsOutDestManager(val variantName: String, val intermediatesDir: File) {
     val ASSETS_ROOT = "merged_assets"
     val COMPRESSED_ASSETS = "compressed_assets"
     val JNI_LIBS = "jniLibs"
@@ -17,7 +17,7 @@ class AssetsOutDestManager(val variantName: String, val intermediatesDir: File) 
 
 
     //debug -> mergeDebugAssets/out/jniLibs
-    private fun buildAssetsOutDestFile(): File {
+    protected open fun buildAssetsOutDestFile(): File {
         var outDir = FileUtils.join(intermediatesDir, ASSETS_ROOT, variantName, "out")
         if (outDir.exists()) {
             return File(outDir, JNI_LIBS)
