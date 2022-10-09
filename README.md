@@ -161,12 +161,14 @@ SoLoadHook.setSoLoadProxy(new XXXSoLoadProxy())
    > -  `minSdkVersion < 23 或 Android Gradle plugin < 3.6.0`，打包时默认值 `android:extractNativeLibs=true`；
    > - `minSdkVersion >= 23 并且 Android Gradle plugin >= 3.6.0`，打包时默认值`android:extractNativeLibs=false`；
    >
-   > apk对比 7z是本插件压缩后版本 false/true代表extractNativeLibs属性版本，可以下载[apk](apk)拖入Android Studio查看中
+   > apk对比 7z是本插件压缩后版本 false/true代表extractNativeLibs属性版本，可以下载[apk](apk)拖入Android Studio查看如：![size](apk/size.png)
    >
-   > apk大小: 2.5MB  下载大小:2.4MB  路径:./apk/app-debug-7z.apk
-   > apk大小: 3.8MB  下载大小:2.6MB  路径:./apk/app-debug-false.apk
-   > apk大小: 3.1MB  下载大小:2.6MB  路径:./apk/app-debug-true.apk
+   > | apk路径                                        | apk大小 | 下载大小 |
+   > | ---------------------------------------------- | ------- | -------- |
+   > | [app-debug-7z.apk](apk/app-debug-7z.apk)       | 2.5MB   | 2.4MB    |
+   > | [app-debug-false.apk](apk/app-debug-false.apk) | 3.8MB   | 2.6MB    |
+   > | [app-debug-true.apk](apk/app-debug-true.apk)   | 3.1MB   | 2.6MB    |
 
-欢迎加我微信进行交流
+欢迎加我微信进行交流x
 
 ![wechat](wechat.jpg)
