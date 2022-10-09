@@ -1,13 +1,8 @@
-plugins {
-    id 'com.android.library'
-}
-
+apply plugin: 'com.android.library'
 android {
-    compileSdkVersion 28
+    compileSdk 33
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 26
         versionCode 1
         versionName '1.0.0'
     }
@@ -18,19 +13,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
 dependencies {
-    implementation "com.imf.so:load-hook:${SO_PLUGIN_VERSION}"
-    implementation "com.imf.so:android-un7z:${SO_PLUGIN_VERSION}"
+    implementation project(":load-hook")
+    implementation project(":android-un7z")
 }
-
-def uploadConfig() {
-    ['groupId': 'com.imf.so', 'artifactId': "${name}", 'version': "${SO_PLUGIN_VERSION}"]
-}
-
-apply from: "${rootDir}/uploadPlugin.gradle"

@@ -1,0 +1,97 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.imf.so",
+    "module": "load-hook-plugin",
+    "version": "0.0.8",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.5.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "load-hook-plugin-0.0.8.jar",
+          "url": "load-hook-plugin-0.0.8.jar",
+          "size": 34337,
+          "sha512": "474e4454df7b3d0ddd0a353c488a67ecc38abb4b555cabac3210e9da053de24ec6b73d7b4442df741ad6b54da085700d6a3c9502c6839527d9a4929f1c71ae96",
+          "sha256": "85597954d9e582c4a50e5ad1380311dd241643d4b3d5710865b320030c7c1ba8",
+          "sha1": "5ed1eccd768d4796659331ea927f2cae16af2683",
+          "md5": "0551949c30eab834191c3504ac88121d"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.apache.commons",
+          "module": "commons-io",
+          "version": {
+            "requires": "1.3.2"
+          }
+        },
+        {
+          "group": "commons-codec",
+          "module": "commons-codec",
+          "version": {
+            "requires": "1.15"
+          }
+        },
+        {
+          "group": "com.android.tools",
+          "module": "common",
+          "version": {
+            "requires": "30.3.0"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "7.3.0"
+          }
+        },
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle-api",
+          "version": {
+            "requires": "7.3.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "load-hook-plugin-0.0.8.jar",
+          "url": "load-hook-plugin-0.0.8.jar",
+          "size": 34337,
+          "sha512": "474e4454df7b3d0ddd0a353c488a67ecc38abb4b555cabac3210e9da053de24ec6b73d7b4442df741ad6b54da085700d6a3c9502c6839527d9a4929f1c71ae96",
+          "sha256": "85597954d9e582c4a50e5ad1380311dd241643d4b3d5710865b320030c7c1ba8",
+          "sha1": "5ed1eccd768d4796659331ea927f2cae16af2683",
+          "md5": "0551949c30eab834191c3504ac88121d"
+        }
+      ]
+    }
+  ]
+}

@@ -6,10 +6,10 @@ android {
         abortOnError false
     }
 
-    compileSdkVersion 30
+    compileSdk 33
     defaultConfig {
         applicationId "com.imf.test"
-        minSdkVersion 24
+        minSdkVersion 14
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         versionCode 1

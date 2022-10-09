@@ -1,6 +1,5 @@
 package com.imf.plugin.so
 
-import com.android.ide.common.internal.WaitableExecutor
 import com.android.utils.FileUtils
 import org.gradle.api.Action
 import java.io.File
@@ -12,12 +11,9 @@ import java.io.File
 class SoFileVariantAction(val variantName: String, val extension: SoFileExtensions, val intermediatesDir: File) : Action<Any?> {
 
     override fun execute(input: Any?) {
-        val soHandle = SoHandle(variantName, extension, AssetsOutDestManager(variantName, intermediatesDir))
+        val soHandle = SoHandle( extension, AssetsOutDestManager(variantName, intermediatesDir))
         val mergedNativeLibsFile = buildMergedNativeLibsFile(variantName)
-        val executor: WaitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
-        soHandle.perform7z(mergedNativeLibsFile, executor, null)
-        executor.waitForTasksWithQuickFail<Any?>(true);
-        soHandle.resultWriteToFile()
+        soHandle.singlePerform7z(mergedNativeLibsFile, null)
     }
 
     //debug -> intermediates\merged_native_libs\debug\out\lib

@@ -1,11 +1,11 @@
 package com.imf.plugin.so
 
 import com.android.build.gradle.AppExtension
-import com.android.build.gradle.api.ApplicationVariant
+import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariantOutput
-import com.android.ide.common.internal.WaitableExecutor
 import com.mainli.apk.ApkSign
 import com.mainli.apk.ZipUtil
+import org.gradle.api.tasks.Internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -17,10 +17,10 @@ import javax.inject.Inject
 
 
 open class ApkSoLibStreamlineTask @Inject constructor(
-    val android: AppExtension,
-    val pluginConfig: SoFileExtensions,
-    val intermediatesDir: File,
-    val variantName: String
+    @Internal val android: AppExtension,
+    @Internal val pluginConfig: SoFileExtensions,
+    @Internal val intermediatesDir: File,
+    @Internal val variantName: String
 ) : DefaultTask() {
 
     @TaskAction
@@ -48,7 +48,7 @@ open class ApkSoLibStreamlineTask @Inject constructor(
         }
     }
 
-    private fun getApkFile(variant: ApplicationVariant): File? {
+    private fun getApkFile(variant: ApkVariant): File? {
         var outputFile: File? = null
         variant.outputs.all { output: BaseVariantOutput ->
             try {
@@ -65,8 +65,8 @@ open class ApkSoLibStreamlineTask @Inject constructor(
     }
 
     fun log(msg: Any) {
-        project.logger.info("[ApkSoLibStreamlineTask]: ${msg}")
-//        println("[ApkSoLibStreamlineTask]: ${msg}")
+//        project.logger.info("[ApkSoLibStreamlineTask]: ${msg}")
+        println("[ApkSoLibStreamlineTask]: ${msg}")
     }
 
     open fun streamlineApkSoFile(apk: File?): File? {
@@ -90,20 +90,16 @@ open class ApkSoLibStreamlineTask @Inject constructor(
                 }
                 ZipUtil.addZipFile2ZipOutputStream(inputZip, inputZipEntry, zipOutputStream)
             }
-
-            val executor: WaitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
-            val soHandle = SoHandle(variantName,
+            val soHandle = SoHandle(
                 pluginConfig,
                 object : AssetsOutDestManager(variantName, intermediatesDir) {
                     override fun buildAssetsOutDestFile(): File {
                         return File(streamlineFile, JNI_LIBS)
                     }
                 })
-            soHandle.perform7z(
-                File(streamlineFile, "lib"), executor, null
+            soHandle.singlePerform7z(
+                File(streamlineFile, "lib"), null
             )
-            executor.waitForTasksWithQuickFail<Any?>(true);
-            soHandle.resultWriteToFile()
             ZipUtil.addFile2ZipOutputStream(
                 File(streamlineFile, "jniLibs"), "assets/jniLibs/", zipOutputStream
             )

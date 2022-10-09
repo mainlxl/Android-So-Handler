@@ -9,9 +9,10 @@ import com.android.build.api.transform.Transform
 import com.android.build.api.transform.TransformInput
 import com.android.build.api.transform.TransformOutputProvider
 import com.android.build.gradle.internal.pipeline.TransformManager
-import com.android.ide.common.internal.WaitableExecutor
 import com.android.utils.FileUtils
 import groovy.io.FileType
+
+import java.util.concurrent.Executors
 
 class SoLoadHookTransform extends Transform {
     private SoLoadHookExtensions extension
@@ -61,7 +62,7 @@ class SoLoadHookTransform extends Transform {
             outputProvider.deleteAll()
         }
         SoLoadClassModifier.configExclude(extension.excludePackage, extension.isSkipRAndBuildConfig)
-        WaitableExecutor executor = WaitableExecutor.useGlobalSharedThreadPool()
+        def executor = Executors.newFixedThreadPool(10)
         inputs.each { TransformInput input ->
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 File dest = outputProvider.getContentLocation(directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
@@ -115,6 +116,11 @@ class SoLoadHookTransform extends Transform {
             }
 
         }
-        executor.waitForTasksWithQuickFail(true);
+        executor.shutdown();
+        while (true) {//等待所有任务都执行结束
+            if (executor.isTerminated()) {//所有的子线程都结束了
+                break
+            }
+        }
     }
 }

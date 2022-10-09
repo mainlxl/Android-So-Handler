@@ -3,10 +3,9 @@ plugins {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdk 33
 
     defaultConfig {
-        minSdkVersion 21
         versionCode 1
         versionName '1.0.0'
         consumerProguardFiles 'consumer-proguard-rules.pro'
@@ -30,17 +29,8 @@ android {
             proguardFiles 'consumer-proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
 dependencies {
 }
 
-def uploadConfig() {
-    ['groupId': 'com.imf.so', 'artifactId': "${name}", 'version': "${SO_PLUGIN_VERSION}"]
-}
-
-apply from: "${rootDir}/uploadPlugin.gradle"

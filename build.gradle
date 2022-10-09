@@ -18,7 +18,7 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url uri("${rootDir}/maven") }
+        maven { url uri("${project.rootProject.rootDir}/maven") }
         maven { url "https://maven.aliyun.com/repository/google" }
         maven { url "https://maven.aliyun.com/repository/jcenter" }
         maven { url "https://raw.githubusercontent.com/Android-Mainli/Maven/master" }
@@ -27,4 +27,55 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+subprojects { pro ->
+    def name = pro.name
+    if (name == 'app' || name == 'testLibrary') {
+        return
+    }
+    apply plugin: 'maven-publish'
+    afterEvaluate {
+        def isJavaProject = true
+        if (name == 'load-assets-7z' || name == 'android-un7z') {
+            isJavaProject = false
+        }
+        afterEvaluate {
+            publishing {
+                publications {
+                    release(MavenPublication) {
+                        groupId 'com.imf.so'
+                        artifactId pro.name
+                        version SO_PLUGIN_VERSION
+                        if (isJavaProject) {
+                            from components.java
+                        } else {
+                            from components.release
+                        }
+                    }
+                }
+                repositories {
+                    maven {
+                        url = file("${rootDir}/maven")
+                    }
+                }
+            }
+        }
+    }
+    task uploadAll { task ->
+        task.group = 'upload'
+        gradle.projectsEvaluated {
+            task.dependsOn project.tasks.clean
+            task.dependsOn project.tasks.build
+
+            project.tasks.build.mustRunAfter project.tasks.clean
+
+            project.subprojects {
+                if (it.name != 'app') {
+                    task.dependsOn it.tasks.publish
+                    upload.mustRunAfter project.tasks.build
+                }
+            }
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.mainli.apk;
 
-import com.android.utils.FileUtils;
 
 import java.io.Closeable;
 import java.io.File;
@@ -8,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -85,6 +83,9 @@ public class ZipUtil {
     public static void addFile2ZipOutputStream(File file, String relativePath, ZipOutputStream zos) {
         InputStream is = null;
         try {
+            if (!file.exists()) {
+                return;
+            }
             if (!file.isDirectory()) {
                 ZipEntry zp = new ZipEntry(relativePath);
                 zos.putNextEntry(zp);

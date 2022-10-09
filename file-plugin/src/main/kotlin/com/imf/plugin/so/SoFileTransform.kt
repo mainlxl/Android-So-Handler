@@ -3,16 +3,15 @@ package com.imf.plugin.so
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.ExtendedContentType
 import com.android.build.gradle.internal.pipeline.TransformManager
-import com.android.ide.common.internal.WaitableExecutor
 import com.android.utils.FileUtils
-import com.google.common.collect.ImmutableSet
 import java.io.File
+import java.util.concurrent.Executors
 
 class SoFileTransform(val extension: SoFileExtensions, val intermediatesDir: File) : Transform() {
     override fun getName(): String = "soFileTransform"
 
     override fun getInputTypes(): MutableSet<QualifiedContent.ContentType> {
-        return ImmutableSet.of(ExtendedContentType.NATIVE_LIBS)
+        return mutableSetOf(ExtendedContentType.NATIVE_LIBS)
     }
 
     override fun getScopes(): MutableSet<in QualifiedContent.Scope> = TransformManager.SCOPE_FULL_PROJECT;
@@ -32,9 +31,9 @@ class SoFileTransform(val extension: SoFileExtensions, val intermediatesDir: Fil
         if (!isRetainAll && extension.deleteSoLibs.isNullOrEmpty() && extension.compressSo2AssetsLibs.isNullOrEmpty()) {
             isRetainAll = true
         }
-        val soHandle = SoHandle(variantName, extension, AssetsOutDestManager(variantName, intermediatesDir))
+        val soHandle = SoHandle( extension, AssetsOutDestManager(variantName, intermediatesDir))
         println("isRetainAll:${isRetainAll}")
-        val executor: WaitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
+        val executor = Executors.newFixedThreadPool(10)
         transformInvocation.inputs.forEach { input: TransformInput ->
             input.directoryInputs.forEach { directoryInput: DirectoryInput ->
                 val dest: File = outputProvider.getContentLocation(directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
@@ -57,7 +56,7 @@ class SoFileTransform(val extension: SoFileExtensions, val intermediatesDir: Fil
                 })
             }
         }
-        executor.waitForTasksWithQuickFail<Any?>(true);
+        executor.shutdown()
         //结果写入assets文件中
         soHandle.resultWriteToFile()
     }

@@ -124,7 +124,7 @@ SoLoadHook.setSoLoadProxy(new XXXSoLoadProxy())
 根据com.android.tools.build:gradle:x.x.x中版本号不同选择使用哪个
 3.4.0版本及以下使用SoFileTransformPlugin
 3.5.0 - 3.6.0版本使用SoFileAttachMergeTaskPlugin
-4.1.0版本使用ApkSoFileAdjustPlugin
+4.1.0以上包含7.3.0版本使用ApkSoFileAdjustPlugin
 
 > 4.1.0中添加了compressed_assets机制导致无法把压缩后的so文件放入asstes中顾调整为针对已出包apk进行so文件操作并重新签名
 
@@ -138,7 +138,28 @@ SoLoadHook.setSoLoadProxy(new XXXSoLoadProxy())
 
 **接入方式参考顶部最开始部分**
 
+### 三、常见问题
 
+1. 安装时报错`Failure [INSTALL_FAILED_INVALID_APK: Failed to extract native libraries, res=-2]`
+
+   请在`application`标签添加属性`android:extractNativeLibs="true"` 如下：
+
+   ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <manifest ...>
+       <application android:extractNativeLibs="true">
+         ...
+   </manifest>
+   
+   ```
+
+   > 关于extractNativeLibs属性
+   >
+   > - 进行apk打包时，`android:extractNativeLibs=false`会对Module中的so库进行压缩，最终得到的apk体积较小。
+   >   - `好处是：`用户在应用市场下载和升级时，因为消耗的流量较小，用户有更强的下载和升级意愿。
+   >   - `缺点是：`因为so是压缩存储的，因此用户安装时，系统会将so解压出来，重新存储一份。因此安装时间会变长，占用的用户磁盘存储空间反而会增大。
+   > -  `minSdkVersion < 23 或 Android Gradle plugin < 3.6.0`，打包时默认值 `android:extractNativeLibs=true`；
+   > - `minSdkVersion >= 23 并且 Android Gradle plugin >= 3.6.0`，打包时默认值`android:extractNativeLibs=false`；
 
 欢迎加我微信进行交流
 
