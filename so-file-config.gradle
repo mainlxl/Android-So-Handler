@@ -6,6 +6,10 @@
  * 3.5.0 - 3.6.0版本使用SoFileAttachMergeTaskPlugin
  * SoFileTransformPlugin使用Transform进行so文件压缩删除
  * SoFileAttachMergeTaskPlugin则在指定文件夹中处理
+ *
+ * ApkSoFileAdjustPlugin插件:4.1.0中添加了compressed_assets机制导致无法把压缩后的so文件放入asstes中
+ * 顾调整为针对已出包apk进行so文件操作并重新签名
+ *
  */
 //apply plugin: 'SoFileTransformPlugin'
 //apply plugin: 'SoFileAttachMergeTaskPlugin'

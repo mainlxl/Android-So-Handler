@@ -35,24 +35,33 @@
 # 接入方式如下:
 
 ps:配置较多全可走默认 ~_ ~!
+
+0. 前往[Release](https://github.com/Android-Mainli/Android-So-Handler/releases)下载对应版本`maven.zip`解压并放入项目根目录
+
 1. 根build.gradle中加入
 ```groovy
 buildscript {
     repositories {
-        maven { url "https://raw.githubusercontent.com/IMFWorks/Android-So-Handler/master/maven" }
+        maven { url uri("${rootDir}/maven") }
     }
 }
 allprojects {
     repositories {
-      maven { url "https://raw.githubusercontent.com/IMFWorks/Android-So-Handler/master/maven" }
+      maven { url uri("${rootDir}/maven") }
     }
 }
 ```
 2. 复制工程下[so-file-config.gradle](so-file-config.gradle)到工程根目录
-3. 工程根目录**gradle.properties**中添加`SO_PLUGIN_VERSION=0.0.6`
+
+3. 工程根目录**gradle.properties**中添加`SO_PLUGIN_VERSION=x.x.x`
    **build.gradle**中添加`classpath "com.imf.so:load-hook-plugin:${SO_PLUGIN_VERSION}"`和`classpath "com.imf.so:file-plugin:${SO_PLUGIN_VERSION}"`
+
+   > x.x.x修改为从[Release](https://github.com/Android-Mainli/Android-So-Handler/releases)下载的版本 如：0.0.7
+
 4. **app**的**build.gradle**中添加`apply from: "${rootDir}/so-file-config.gradle"`
+
 5. 在Application中调用`AssetsSoLoadBy7zFileManager.init(v.getContext());`初始化,重载方法支持传入NeedDownloadSoListener完成云端所需要so库下载,下载后使用SoFileInfo#insertOrUpdateCache(saveLibsDir,File)插入缓存中
+
 6. 修改根目录中[so-file-config.gradle](so-file-config.gradle)进行压缩删减库配置主要修改deleteSoLibs与compressSo2AssetsLibs如下:
 ```groovy
 //指定编辑阶段要删除的so库
@@ -110,13 +119,15 @@ SoLoadHook.setSoLoadProxy(new XXXSoLoadProxy())
 > 如果不想在指定包名下修改 在excludePackage中配置报名
 > 如果不想在指定类或方法下被修改字节码,请添加注解@KeepSystemLoadLib
 
-### 二、SoFileTransformPlugin与SoFileAttachMergeTaskPlugin插件依赖SoLoadHookPlugin
-SoFileTransformPlugin与SoFileAttachMergeTaskPlugin功能一样只是编辑阶段插入口不同
+### 二、~~SoFileTransformPlugin与SoFileAttachMergeTaskPlugin插件依赖SoLoadHookPlugin~~,使用ApkSoFileAdjustPlugin
+~~SoFileTransformPlugin~~与~~SoFileAttachMergeTaskPlugin~~功能一样只是编辑阶段插入口不同
 根据com.android.tools.build:gradle:x.x.x中版本号不同选择使用哪个
 3.4.0版本及以下使用SoFileTransformPlugin
 3.5.0 - 3.6.0版本使用SoFileAttachMergeTaskPlugin
-其他版本请自行尝试,如果都失败提交issues我这边进行适配
-已知问题最新版本4.1.0中添加了compressed_assets机制导致无法把压缩后的so文件放入asstes中,这个空闲时间阅读下4.1.0源码后适配 也欢迎大家push提交解决
+4.1.0版本使用ApkSoFileAdjustPlugin
+
+> 4.1.0中添加了compressed_assets机制导致无法把压缩后的so文件放入asstes中顾调整为针对已出包apk进行so文件操作并重新签名
+
 
 1. 通过实现transform或在mergeNativeLibs中添加Action的方式,对so库进行7z压缩(利用压缩差实现压缩apk),压缩后放入`asstes`下的`jniLib`
 2. 根据压缩或删除so情况生成`info.json`
@@ -127,7 +138,8 @@ SoFileTransformPlugin与SoFileAttachMergeTaskPlugin功能一样只是编辑阶�
 
 **接入方式参考顶部最开始部分**
 
-### 三、TODO
-1. 尝试对比压缩工具 zstd 与 7z
-2. 兼容[facebook/SoLoader](https://github.com/facebook/SoLoader)库解压加载
 
+
+欢迎加我微信进行交流
+
+![wechat](wechat.jpg)
