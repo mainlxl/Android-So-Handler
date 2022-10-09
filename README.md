@@ -160,6 +160,12 @@ SoLoadHook.setSoLoadProxy(new XXXSoLoadProxy())
    >   - `缺点是：`因为so是压缩存储的，因此用户安装时，系统会将so解压出来，重新存储一份。因此安装时间会变长，占用的用户磁盘存储空间反而会增大。
    > -  `minSdkVersion < 23 或 Android Gradle plugin < 3.6.0`，打包时默认值 `android:extractNativeLibs=true`；
    > - `minSdkVersion >= 23 并且 Android Gradle plugin >= 3.6.0`，打包时默认值`android:extractNativeLibs=false`；
+   >
+   > apk对比 7z是本插件压缩后版本 false/true代表extractNativeLibs属性版本，可以下载[apk](apk)拖入Android Studio查看中
+   >
+   > apk大小: 2.5MB  下载大小:2.4MB  路径:./apk/app-debug-7z.apk
+   > apk大小: 3.8MB  下载大小:2.6MB  路径:./apk/app-debug-false.apk
+   > apk大小: 3.1MB  下载大小:2.6MB  路径:./apk/app-debug-true.apk
 
 欢迎加我微信进行交流
 
