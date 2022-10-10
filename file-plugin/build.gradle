@@ -6,7 +6,6 @@ plugins {
 repositories {
     maven { url "https://maven.aliyun.com/repository/jcenter" }
     maven { url "https://maven.aliyun.com/repository/google" }
-    mavenCentral()
 }
 
 
@@ -16,5 +15,5 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.0"
     compileOnly "com.android.tools.build:gradle:$ANDROID_GRADLE_VERSION"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
 }
-

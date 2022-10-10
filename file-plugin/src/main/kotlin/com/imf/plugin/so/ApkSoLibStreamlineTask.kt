@@ -64,11 +64,6 @@ open class ApkSoLibStreamlineTask @Inject constructor(
         return outputFile
     }
 
-    fun log(msg: Any) {
-//        project.logger.info("[ApkSoLibStreamlineTask]: ${msg}")
-        println("[ApkSoLibStreamlineTask]: ${msg}")
-    }
-
     open fun streamlineApkSoFile(apk: File?): File? {
         if (apk == null || !apk.exists()) {
             return null

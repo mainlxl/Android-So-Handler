@@ -31,7 +31,7 @@ task clean(type: Delete) {
 
 subprojects { pro ->
     def name = pro.name
-    if (name == 'app' || name == 'testLibrary') {
+    if (name == 'app' || name == 'testLibrary' || name == 'p7z') {
         return
     }
     apply plugin: 'maven-publish'
@@ -44,7 +44,7 @@ subprojects { pro ->
             publishing {
                 publications {
                     release(MavenPublication) {
-                        groupId 'com.imf.so'
+                        groupId GROUP_ID
                         artifactId pro.name
                         version SO_PLUGIN_VERSION
                         if (isJavaProject) {
@@ -77,5 +77,11 @@ subprojects { pro ->
                 }
             }
         }
+    }
+}
+
+task aaa {
+    doLast {
+        println org.gradle.internal.os.OperatingSystem.current()
     }
 }

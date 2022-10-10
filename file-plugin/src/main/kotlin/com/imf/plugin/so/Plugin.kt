@@ -1,10 +1,18 @@
 package com.imf.plugin.so
 
 import com.android.build.gradle.AppExtension
+import com.google.gradle.osdetector.OsDetector
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.*
+import java.util.Collections
 import java.util.stream.Collectors
+
+fun log(msg: Any) {
+//        project.logger.info("[ApkSoLibStreamlineTask]: ${msg}")
+    println("[SoFilePlugin]: ${msg}")
+}
 
 abstract class SoFilePlugin : Plugin<Project> {
     lateinit var intermediatesDir: File;
@@ -14,18 +22,56 @@ abstract class SoFilePlugin : Plugin<Project> {
         pluginConfig = project.extensions.create("SoFileConfig", SoFileExtensions::class.java)
         android = project.extensions.getByType(AppExtension::class.java)
         intermediatesDir = File(project.buildDir, "intermediates")
+        if (pluginConfig.exe7zName.isEmpty()) {
+            project.apply(mapOf("plugin" to "com.google.osdetector"))
+        }
         project.afterEvaluate {
-            afterProjectEvaluate(it)
+            log("enable: ${pluginConfig.enable}")
+            if (pluginConfig.enable == true) {
+                if (pluginConfig.exe7zName.isEmpty()) {
+                    pluginConfig.exe7zName = find7zPath(project)
+                }
+                log("p7z path: ${pluginConfig.exe7zName}")
+                afterProjectEvaluate(it)
+            }
         }
     }
+
+    private fun find7zPath(project: Project): String {
+        val p7zConfig = project.configurations.create("ApkSoFileAdjustLocatorP7z") {
+            it.isVisible = false
+            it.isTransitive = false
+            it.setExtendsFrom(Collections.emptyList())
+        }
+        val osdetector = project.extensions.getByType(OsDetector::class.java)
+        val dep = project.dependencies.add(
+            p7zConfig.name, mapOf<String, String>(
+                "group" to "com.mainli",
+                "name" to "p7z",
+                "classifier" to osdetector.classifier,
+                "version" to "1.0.0",
+                "ext" to "exe"
+            )
+        )
+        try {
+            val file = p7zConfig.fileCollection(dep).singleFile
+            if (!file.canExecute() && !file.setExecutable(true)) {
+                throw  GradleException("Cannot set ${file} as executable")
+            }
+            return file.absolutePath
+        } catch (e: Exception) {
+        }
+        val os = System.getenv("OS")?.lowercase()
+        if (os != null && os.contains("windows")) {
+            return "7z.exe"
+        }
+        return "7z"
+    }
+
 
     protected open fun afterProjectEvaluate(project: Project) {
         val defaultConfig = android.defaultConfig
         pluginConfig.abiFilters = defaultConfig.ndk.abiFilters
-        val os = System.getenv("OS")?.lowercase()
-        if (os != null && os.contains("windows")) {
-            pluginConfig.exe7zName = "7z.exe"
-        }
         val minSdkVersion: Int = defaultConfig.minSdkVersion?.apiLevel ?: 0
         pluginConfig.neededRetainAllDependencies =
             pluginConfig.forceNeededRetainAllDependencies ?: (minSdkVersion <= 23)
@@ -120,7 +166,7 @@ class ApkSoFileAdjustPlugin : SoFilePlugin() {
             )
             task.group = "Build"
             task.description = "进行so共享库处理"
-            task.dependsOn.add("package${capitalizeVariantName}")
+            task.setMustRunAfter(setOf(project.tasks.findByPath("package${capitalizeVariantName}")))
             project.tasks.findByPath("assemble${capitalizeVariantName}")?.dependsOn?.add(task)
 
         }

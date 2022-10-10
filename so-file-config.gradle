@@ -2,20 +2,27 @@
  * so库压缩配置
  * 版本指根目录build.gradle下
  * com.android.tools.build:gradle:x.x.x中x.x.x版本号
+ *
  * 3.4.0版本及以下使用SoFileTransformPlugin
  * 3.5.0 - 3.6.0版本使用SoFileAttachMergeTaskPlugin
+ * 理论上通用 ApkSoFileAdjustPlugin  不过会对apk包进行二次打包组装
+ *
  * SoFileTransformPlugin使用Transform进行so文件压缩删除
  * SoFileAttachMergeTaskPlugin则在指定文件夹中处理
  *
  * ApkSoFileAdjustPlugin插件:4.1.0中添加了compressed_assets机制导致无法把压缩后的so文件放入asstes中
  * 顾调整为针对已出包apk进行so文件操作并重新签名
- *
- */
+ **/
 //apply plugin: 'SoFileTransformPlugin'
 //apply plugin: 'SoFileAttachMergeTaskPlugin'
 apply plugin: 'ApkSoFileAdjustPlugin'
 SoFileConfig {
-    useAppendActionMethod = false
+    /**
+     * 总开关配置
+     * 不配置时根据compressSo2AssetsLibs与deleteSoLibs是否为空自动开启关闭
+     * 配置true强制开启 false强制关闭
+     **/
+//    enable = false
     //设置debug下不删除与压缩so库
 //    excludeBuildTypes = ['debug']
 
@@ -23,38 +30,30 @@ SoFileConfig {
      * 强制保留所有依赖
      * 默认为false时
      * minSdkVersion <= 23 保留所有依赖
-     * minSdkVersion > 23  只保留deleteSoLibs与compressSo2AssetsLibs中处理过的依赖
-     */
+     * minSdkVersion > 23  只保留deleteSoLibs与compressSo2AssetsLibs中处理过的依赖*/
     forceNeededRetainAllDependencies = true
     //设置要删除的so库
     deleteSoLibs = [
 
     ]
     //设置要压缩的库 注意libun7zip.so 为7z解压库不可压缩
-    compressSo2AssetsLibs = [
-            'libtestLibrary.so',
-            'libnative-aar-lib.so',
-            'libsource.so',
-            'libblur-lib.so',
-    ]
+    compressSo2AssetsLibs = ['libtestLibrary.so',
+                             'libnative-aar-lib.so',
+                             'libsource.so',
+                             'libblur-lib.so',]
     //排除依赖
-    excludeDependencies = [
-            'libGLESv2.so',
-            'libGLESv3.so',
-            'libgraphicsenv.so',
-            'libjnigraphics.so',
-            'liblog.so',
-            'liblz4.so',
-            'liblzma.so'
-    ]
+    excludeDependencies = ['libGLESv2.so',
+                           'libGLESv3.so',
+                           'libgraphicsenv.so',
+                           'libjnigraphics.so',
+                           'liblog.so',
+                           'liblz4.so',
+                           'liblzma.so']
     /**
      * 配置自定义依赖
      * 用于解决 a.so 并未声明依赖 b.so 并且内部通过dlopen打开b.so
-     * 或者反射System.loadLibrary等跳过hook加载so库等场景
-     */
-    customDependencies = [
-            'libsource.so': ['liblog.so']
-    ]
+     * 或者反射System.loadLibrary等跳过hook加载so库等场景*/
+    customDependencies = ['libsource.so': ['liblog.so']]
 }
 /**
  * so库加载Hook插件
@@ -70,8 +69,7 @@ SoFileConfig {
  * 3.使用@KeepSystemLoadLib注解不会被修改
  *
  * 具体可查看load-hook库
- * implementation "com.imf.so:load-hook:x.x.x"
- */
+ * implementation "com.imf.so:load-hook:x.x.x"*/
 apply plugin: 'SoLoadHookPlugin'
 SoLoadHookConfig {
     //是否跳过R文件与BuildConfig

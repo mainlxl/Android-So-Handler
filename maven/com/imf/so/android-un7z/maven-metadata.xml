@@ -3,11 +3,11 @@
   <groupId>com.imf.so</groupId>
   <artifactId>android-un7z</artifactId>
   <versioning>
-    <latest>0.0.8</latest>
-    <release>0.0.8</release>
+    <latest>0.0.9</latest>
+    <release>0.0.9</release>
     <versions>
-      <version>0.0.8</version>
+      <version>0.0.9</version>
     </versions>
-    <lastUpdated>20221009142806</lastUpdated>
+    <lastUpdated>20221010150939</lastUpdated>
   </versioning>
 </metadata>

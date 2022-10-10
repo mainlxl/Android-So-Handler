@@ -1,0 +1,41 @@
+//apply plugin: 'com.google.osdetector'
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        p7z(MavenPublication) {
+            artifactId project.name
+            groupId 'com.mainli'
+            version '1.0.0'
+            artifact("executable/p7z-linux-x86_32.exe") {
+                classifier "linux-x86_32"
+                extension "exe"
+            }
+            artifact("executable/p7z-linux-x86_64.exe") {
+                classifier "linux-x86_64"
+                extension "exe"
+            }
+            artifact("executable/p7z-windows-x86_32.exe") {
+                classifier "windows-x86_32"
+                extension "exe"
+            }
+            artifact("executable/p7z-windows-x86_64.exe") {
+                classifier "windows-x86_64"
+                extension "exe"
+            }
+            artifact("executable/p7z-osx-x86_64.exe") {
+                classifier "osx-x86_64"
+                extension "exe"
+            }
+            artifact("executable/p7z-osx-aarch_64.exe") {
+                classifier "osx-aarch_64"
+                extension "exe"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = file("${project.rootDir}/maven")
+        }
+    }
+}

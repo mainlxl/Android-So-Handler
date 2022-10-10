@@ -2,9 +2,17 @@ package com.imf.plugin.so
 
 //必须open 否则project.extensions.create无法创建SoFileExtensions的代理子类
 open class SoFileExtensions {
-    var exe7zName: String = "7z"
-    //是否使用追加Action方式执行so压缩
-    var useAppendActionMethod = true;
+    //是否开启插件
+    var enable: Boolean? = null
+        get() {
+            if (field == null) {
+                return !(deleteSoLibs.isNullOrEmpty() && compressSo2AssetsLibs.isNullOrEmpty())
+            }
+            return field
+        }
+
+    //7z
+    var exe7zName: String = ""
     var abiFilters: Set<String>? = null
 
     //要移除的so库
