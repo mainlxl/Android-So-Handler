@@ -1,7 +1,9 @@
 # p7z
 **7z工具合集**
 拷贝自[AndResGuard](https://github.com/shwenzhang/AndResGuard/tree/master/SevenZip)项目
-并增加苹果M1架构与linux-aarch64,[使用源码编译](https://sourceforge.net/projects/p7zip)编译
+并做如下修改
+1. 重新编译linux-x86_64 
+2. 并增加苹果M1架构与linux-aarch64,[使用16.02源码编译](https://sourceforge.net/projects/p7zip)编译
 
 
 
