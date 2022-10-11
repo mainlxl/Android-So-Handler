@@ -49,7 +49,7 @@ abstract class SoFilePlugin : Plugin<Project> {
                 "group" to "com.mainli",
                 "name" to "p7z",
                 "classifier" to osdetector.classifier,
-                "version" to "1.0.0",
+                "version" to "1.0.1",
                 "ext" to "exe"
             )
         )

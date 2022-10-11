@@ -28,10 +28,10 @@
           "name": "load-hook-plugin-0.0.9.jar",
           "url": "load-hook-plugin-0.0.9.jar",
           "size": 34337,
-          "sha512": "a01816affece06e28b31675b843a094eb4a476ffda442c33faf6a6fa38b9697137b338512bee84c2db183de82a0f67e51dbecfd9745df6ba09f94d88522e44f0",
-          "sha256": "841bf36757244520c3dc54c55239dbeefa4e53e722b183fd00fa45f34fe330e7",
-          "sha1": "05b6369ce6bcb6e29336da13ebf0743582c123d0",
-          "md5": "d3c7e292f24d9925416c31375a606692"
+          "sha512": "8d81e92b2250968f9d68eb71cc1eb919bf1690e026ec97751aad4df501653c0381a6ad2d2594f39fa411b8ff681104fb7489077c12865d75de7e823c32c41f01",
+          "sha256": "42789faade618d530f858034360a68aa4b0a417931846992137a5b1ea4f4a969",
+          "sha1": "21e722aeb667c6e32ed2936e80fc76f1963bb577",
+          "md5": "ffc6e358f8001c2e5ddce320eb73fe3f"
         }
       ]
     },
@@ -86,10 +86,10 @@
           "name": "load-hook-plugin-0.0.9.jar",
           "url": "load-hook-plugin-0.0.9.jar",
           "size": 34337,
-          "sha512": "a01816affece06e28b31675b843a094eb4a476ffda442c33faf6a6fa38b9697137b338512bee84c2db183de82a0f67e51dbecfd9745df6ba09f94d88522e44f0",
-          "sha256": "841bf36757244520c3dc54c55239dbeefa4e53e722b183fd00fa45f34fe330e7",
-          "sha1": "05b6369ce6bcb6e29336da13ebf0743582c123d0",
-          "md5": "d3c7e292f24d9925416c31375a606692"
+          "sha512": "8d81e92b2250968f9d68eb71cc1eb919bf1690e026ec97751aad4df501653c0381a6ad2d2594f39fa411b8ff681104fb7489077c12865d75de7e823c32c41f01",
+          "sha256": "42789faade618d530f858034360a68aa4b0a417931846992137a5b1ea4f4a969",
+          "sha1": "21e722aeb667c6e32ed2936e80fc76f1963bb577",
+          "md5": "ffc6e358f8001c2e5ddce320eb73fe3f"
         }
       ]
     }

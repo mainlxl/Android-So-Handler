@@ -6,13 +6,21 @@ publishing {
         p7z(MavenPublication) {
             artifactId project.name
             groupId 'com.mainli'
-            version '1.0.0'
+            /**
+             * 需同步跟随com.imf.plugin.so.SoFilePlugin#find7zPath
+             * 种版本
+             */
+            version '1.0.1'
             artifact("executable/p7z-linux-x86_32.exe") {
                 classifier "linux-x86_32"
                 extension "exe"
             }
             artifact("executable/p7z-linux-x86_64.exe") {
                 classifier "linux-x86_64"
+                extension "exe"
+            }
+            artifact("executable/p7z-linux-aarch64.exe") {
+                classifier "linux-aarch64"
                 extension "exe"
             }
             artifact("executable/p7z-windows-x86_32.exe") {
