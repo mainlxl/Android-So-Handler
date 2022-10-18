@@ -1,5 +1,7 @@
 # Android-So-Handler
 **减包工具集合 , 通过处理so库实现减包**
+> PS：减so文件时很有必要了解so来自那个三方或者一方库知己知彼，这里推荐我另一个项目[AnalyzeSoPlugin](https://github.com/Android-Mainli/AnalyzeSoPlugin)去溯源
+
 
 ### 特点如下:
 1. 支持APK中所有通过`System.Load/LoadLibrary`加载的So库文件（包含Maven、aar等方式引入三方库与源码中的so文件）进行处理。
