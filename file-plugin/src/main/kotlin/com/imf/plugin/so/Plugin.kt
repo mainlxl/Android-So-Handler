@@ -56,7 +56,7 @@ abstract class SoFilePlugin : Plugin<Project> {
         try {
             val file = p7zConfig.fileCollection(dep).singleFile
             if (!file.canExecute() && !file.setExecutable(true)) {
-                throw  GradleException("Cannot set ${file} as executable")
+                throw GradleException("Cannot set ${file} as executable")
             }
             return file.absolutePath
         } catch (e: Exception) {
@@ -156,6 +156,11 @@ class ApkSoFileAdjustPlugin : SoFilePlugin() {
             }
         }
         if (project.tasks.findByPath(taskName) == null) {
+            val tasks =
+                setOf(project.tasks.findByPath("package${capitalizeVariantName}")).filterNotNull()
+            if (tasks.isEmpty()) {
+                return
+            }
             val task = project.tasks.create(
                 taskName,
                 ApkSoLibStreamlineTask::class.java,
@@ -166,9 +171,8 @@ class ApkSoFileAdjustPlugin : SoFilePlugin() {
             )
             task.group = "Build"
             task.description = "进行so共享库处理"
-            task.setMustRunAfter(setOf(project.tasks.findByPath("package${capitalizeVariantName}")))
+            task.setMustRunAfter(tasks)
             project.tasks.findByPath("assemble${capitalizeVariantName}")?.dependsOn?.add(task)
-
         }
     }
 }

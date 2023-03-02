@@ -2,10 +2,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdk 33
 
-    defaultConfig {
-        versionCode 1
-        versionName '1.0.0'
-    }
 
     buildTypes {
         release {
@@ -13,6 +9,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'com.imf.so.load.assetes'
 }
 
 dependencies {

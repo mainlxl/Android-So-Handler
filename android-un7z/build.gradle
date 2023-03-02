@@ -6,8 +6,6 @@ android {
     compileSdk 33
 
     defaultConfig {
-        versionCode 1
-        versionName '1.0.0'
         consumerProguardFiles 'consumer-proguard-rules.pro'
     }
     externalNativeBuild {
@@ -29,6 +27,7 @@ android {
             proguardFiles 'consumer-proguard-rules.pro'
         }
     }
+    namespace 'com.hzy.lib7z'
 }
 
 dependencies {
