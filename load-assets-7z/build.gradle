@@ -1,8 +1,12 @@
 apply plugin: 'com.android.library'
+
 android {
     compileSdk 33
 
-
+    defaultConfig {
+        minSdk = 14
+        targetSdk = 33
+    }
     buildTypes {
         release {
             minifyEnabled false

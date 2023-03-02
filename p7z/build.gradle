@@ -39,6 +39,10 @@ publishing {
                 classifier "osx-aarch_64"
                 extension "exe"
             }
+            artifact("executable/p7z.aar") {
+                classifier "all"
+                extension "aar"
+            }
         }
     }
     repositories {

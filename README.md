@@ -1,12 +1,52 @@
 # Android-So-Handler
 
+## 此仓库说明
+
+此仓库在原有仓库基础上修复了一些问题
+
+- 修复了 [A dependency must not be empty #3](https://github.com/Android-Mainli/Android-So-Handler/issues/3)
+- 将仓库接入 [Jitpack](https://jitpack.io/#mcxinyu/Android-So-Handler)，不用再复制 `maven` 文件了
+
+### Jitpack 接入方式
+
+[![](https://jitpack.io/v/mcxinyu/Android-So-Handler.svg)](https://jitpack.io/#mcxinyu/Android-So-Handler)
+
+因为接入 Jitpack 后，暂时没有合并到主仓库，所以接入方式（maven 仓库链接）需要先按下面方法修改，其他的依旧按原仓库说明操作。
+
+```groovy "根目录 gradle.properties"
+buildscript {
+    repositories {
+        maven("https://jitpack.io")
+    }
+    dependencies {
+        // ...
+        if (userSoPlugin) {
+            classpath("com.github.mcxinyu.Android-So-Handler:load-hook-plugin:${Versions.so_plugin_version}")
+            classpath("com.github.mcxinyu.Android-So-Handler:file-plugin:${Versions.so_plugin_version}")
+        }
+    }
+}
+```
+
+```groovy "app module gradle.properties"
+repositories {
+    maven("https://jitpack.io")
+}
+dependencies {
+    implementation "com.github.mcxinyu.Android-So-Handler:load-hook:${Versions.so_plugin_version}"
+    implementation "com.github.mcxinyu.Android-So-Handler:load-assets-7z:${Versions.so_plugin_version}"
+}
+```
+
+## 元仓库说明
+
 ** 减包工具集合 , 通过处理 so 库实现减包 **
 > PS：减 so 文件时很有必要了解 so
 >
 来自那个三方或者一方库知己知彼，这里推荐我另一个项目 [AnalyzeSoPlugin](https://github.com/Android-Mainli/AnalyzeSoPlugin)
 > 去溯源
 
-### 特点如下:
+## 特点如下:
 
 1. 支持 APK 中所有通过 `System.Load/LoadLibrary` 加载的 So 库文件（包含 Maven、aar 等方式引入三方库与源码中的
    so 文件）进行处理。
@@ -17,7 +57,7 @@
    自行下载，并在下载后调用 `SoFileInfo#insertOrUpdateCache(saveLibsDir,File)` 插入缓存即可，**
    需要在加载前插入缓存 **
 
-### 数据对比:
+## 数据对比:
 
 仅仅在加载时通过记录的 MD5 判断是否存在，不存在解压，存在则跳过直接加载。
 这里通过压缩时记录的 MD5 判断是否需要解压更新不依赖 apk 版本减少解压次数。
@@ -55,12 +95,12 @@ ps: 配置较多全可走默认 ~_ ~!
 ```groovy
 buildscript {
     repositories {
-        maven {url uri("${rootDir}/maven") }
+        maven { url uri("${rootDir}/maven") }
     }
 }
 allprojects {
     repositories {
-      maven {url uri("${rootDir}/maven") }
+        maven { url uri("${rootDir}/maven") }
     }
 }
 ```
@@ -94,7 +134,7 @@ compressSo2AssetsLibs = []
 
 ## 插件介绍
 
-### 一、 SoLoadHookPlugin 插件
+## 一、 SoLoadHookPlugin 插件
 
 1. 通过 Hook `System.loadLibrary` 与 `System.load` 实现加载转发具体步骤如下:
 
@@ -110,17 +150,17 @@ compressSo2AssetsLibs = []
 
 ```groovy
 //build.gradle 中只加入
-classpath "com.imf.so:load-hook-plugin:${SO_PLUGIN_VERSION}" 
+classpath "com.imf.so:load-hook-plugin:${SO_PLUGIN_VERSION}"
 //app.gradle 中只配置
 apply plugin: 'SoLoadHookPlugin'
 SoLoadHookConfig {
-		// 是否跳过 R 文件与 BuildConfig
-		isSkipRAndBuildConfig = true
-		// 设置跳过的包名, 跳过的包不去 hook 修改后请先 clean
-		excludePackage = ['com.imf.test.']
+    // 是否跳过 R 文件与 BuildConfig
+    isSkipRAndBuildConfig = true
+    // 设置跳过的包名, 跳过的包不去 hook 修改后请先 clean
+    excludePackage = ['com.imf.test.']
 }
 dependencies {
-  implementation "com.imf.so:load-hook:${SO_PLUGIN_VERSION}"
+    implementation "com.imf.so:load-hook:${SO_PLUGIN_VERSION}"
 }
 ```
 
@@ -139,7 +179,7 @@ SoLoadHook.setSoLoadProxy(new XXXSoLoadProxy())
 > 如果不想在指定包名下修改 在 excludePackage 中配置报名
 > 如果不想在指定类或方法下被修改字节码, 请添加注解 @KeepSystemLoadLib
 
-### 二、~~SoFileTransformPlugin 与 SoFileAttachMergeTaskPlugin 插件依赖
+## 二、~~SoFileTransformPlugin 与 SoFileAttachMergeTaskPlugin 插件依赖
 
 SoLoadHookPlugin~~, 使用 ApkSoFileAdjustPlugin
 
@@ -162,7 +202,7 @@ SoLoadHookPlugin~~, 使用 ApkSoFileAdjustPlugin
 
 ** 接入方式参考顶部最开始部分 **
 
-### 三、常见问题
+## 三、常见问题
 
 1. 安装时报错 `Failure [INSTALL_FAILED_INVALID_APK: Failed to extract native libraries, res=-2]`
 
@@ -194,7 +234,7 @@ SoLoadHookPlugin~~, 使用 ApkSoFileAdjustPlugin
    拖入 Android Studio 查看如：![size](apk/size.png)
    >
    > | apk 路径                                        | apk 大小 | 下载大小 |
-   > | ---------------------------------------------- | ------- | -------- |
+      > | ---------------------------------------------- | ------- | -------- |
    > | [app-debug-7z.apk](apk/app-debug-7z.apk)       | 2.5MB   | 2.4MB    |
    > | [app-debug-false.apk](apk/app-debug-false.apk) | 3.8MB   | 2.6MB    |
    > | [app-debug-true.apk](apk/app-debug-true.apk)   | 3.1MB   | 2.6MB    |

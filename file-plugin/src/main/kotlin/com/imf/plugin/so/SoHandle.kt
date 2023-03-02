@@ -5,7 +5,6 @@ import com.elf.ElfParser
 import com.google.gson.Gson
 import java.io.File
 import java.io.IOException
-import java.util.Map
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors

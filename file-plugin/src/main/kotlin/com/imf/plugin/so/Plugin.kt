@@ -2,12 +2,14 @@ package com.imf.plugin.so
 
 import com.android.build.gradle.AppExtension
 import com.google.gradle.osdetector.OsDetector
+import com.mainli.apk.ZipUtil
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.*
 import java.util.Collections
 import java.util.stream.Collectors
+import java.util.zip.ZipFile
 
 fun log(msg: Any) {
 //        project.logger.info("[ApkSoLibStreamlineTask]: ${msg}")
@@ -43,7 +45,32 @@ abstract class SoFilePlugin : Plugin<Project> {
             it.isTransitive = false
             it.setExtendsFrom(Collections.emptyList())
         }
+
         val osdetector = project.extensions.getByType(OsDetector::class.java)
+
+        //region 尝试查找 aar 里面的可执行文件
+        val depAAR = project.dependencies.add(
+            p7zConfig.name, mapOf(
+                "group" to "com.github.mcxinyu.Android-So-Handler",
+                "name" to "p7z",
+                "classifier" to "all",
+                "version" to "0.0.9-fix1",
+                "ext" to "aar"
+            )
+        )
+        runCatching {
+            val aar = p7zConfig.fileCollection(depAAR).singleFile
+            ZipFile(aar).unzipTo(aar.parentFile)
+            val file = aar.parentFile.listFiles()?.firstOrNull {
+                it.name.contains(osdetector.classifier)
+            } ?: throw FileNotFoundException()
+            if (!file.canExecute() && !file.setExecutable(true)) {
+                throw GradleException("Cannot set ${file} as executable")
+            }
+            return file.absolutePath
+        }
+        //endregion
+
         val dep = project.dependencies.add(
             p7zConfig.name, mapOf<String, String>(
                 "group" to "com.mainli",
@@ -53,13 +80,12 @@ abstract class SoFilePlugin : Plugin<Project> {
                 "ext" to "exe"
             )
         )
-        try {
+        runCatching {
             val file = p7zConfig.fileCollection(dep).singleFile
             if (!file.canExecute() && !file.setExecutable(true)) {
                 throw GradleException("Cannot set ${file} as executable")
             }
             return file.absolutePath
-        } catch (e: Exception) {
         }
         val os = System.getenv("OS")?.lowercase()
         if (os != null && os.contains("windows")) {

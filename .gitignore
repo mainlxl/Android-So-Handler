@@ -8,3 +8,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/p7z/build/
+p7z/executable/p7z.aar
