@@ -14,3 +14,8 @@ dependencies {
     implementation "com.android.tools.build:gradle:$ANDROID_GRADLE_VERSION"
     implementation "com.android.tools.build:gradle-api:$ANDROID_GRADLE_VERSION"
 }
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}

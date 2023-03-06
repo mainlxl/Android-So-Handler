@@ -20,3 +20,8 @@ dependencies {
     implementation project(":load-hook")
     implementation project(":android-un7z")
 }
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.release.java.sourceFiles
+    classifier = 'sources'
+}

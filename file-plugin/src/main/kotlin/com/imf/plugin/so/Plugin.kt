@@ -2,7 +2,6 @@ package com.imf.plugin.so
 
 import com.android.build.gradle.AppExtension
 import com.google.gradle.osdetector.OsDetector
-import com.mainli.apk.ZipUtil
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -171,7 +170,7 @@ class ApkSoFileAdjustPlugin : SoFilePlugin() {
         }
     }
 
-    fun createTask(project: Project, variantName: String) {
+    private fun createTask(project: Project, variantName: String) {
         val capitalizeVariantName =
             variantName.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
         val taskName = "ApkSoFileAdjust${capitalizeVariantName}"

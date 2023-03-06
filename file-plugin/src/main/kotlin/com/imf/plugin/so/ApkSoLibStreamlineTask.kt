@@ -5,8 +5,8 @@ import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariantOutput
 import com.mainli.apk.ApkSign
 import com.mainli.apk.ZipUtil
-import org.gradle.api.tasks.Internal
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.io.FileOutputStream
@@ -27,7 +27,7 @@ open class ApkSoLibStreamlineTask @Inject constructor(
     fun run() {
         android.applicationVariants.all { variant ->
             if (variant.name == variantName) {
-                var apkFile: File? = getApkFile(variant)
+                val apkFile: File? = getApkFile(variant)
                 if (apkFile == null) {
                     log("apk文件目录未找到定义,请升级插件")
                     System.exit(2)
@@ -38,7 +38,7 @@ open class ApkSoLibStreamlineTask @Inject constructor(
                     val signApk = ApkSign.sign(newApk, variant)
                     newApk.delete()
                     signApk.renameTo(apkFile)
-                    val newSize = apkFile!!.length()
+                    val newSize = apkFile.length()
                     val oldSizeM = oldSize / 1024f / 1024f
                     val newSizeM = newSize / 1024f / 1024f
                     val changeSizeM = (oldSize - newSize) / 1024f / 1024f

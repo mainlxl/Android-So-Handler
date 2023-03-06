@@ -33,3 +33,7 @@ android {
 dependencies {
 }
 
+task sourcesJar(type: Jar) {
+    from android.sourceSets.release.java.sourceFiles
+    classifier = 'sources'
+}

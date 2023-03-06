@@ -14,7 +14,8 @@ class SoFileTransform(val extension: SoFileExtensions, val intermediatesDir: Fil
         return mutableSetOf(ExtendedContentType.NATIVE_LIBS)
     }
 
-    override fun getScopes(): MutableSet<in QualifiedContent.Scope> = TransformManager.SCOPE_FULL_PROJECT;
+    override fun getScopes(): MutableSet<in QualifiedContent.Scope> =
+        TransformManager.SCOPE_FULL_PROJECT;
 
     override fun isIncremental(): Boolean = false
 
@@ -31,12 +32,17 @@ class SoFileTransform(val extension: SoFileExtensions, val intermediatesDir: Fil
         if (!isRetainAll && extension.deleteSoLibs.isNullOrEmpty() && extension.compressSo2AssetsLibs.isNullOrEmpty()) {
             isRetainAll = true
         }
-        val soHandle = SoHandle( extension, AssetsOutDestManager(variantName, intermediatesDir))
+        val soHandle = SoHandle(extension, AssetsOutDestManager(variantName, intermediatesDir))
         println("isRetainAll:${isRetainAll}")
         val executor = Executors.newFixedThreadPool(10)
         transformInvocation.inputs.forEach { input: TransformInput ->
             input.directoryInputs.forEach { directoryInput: DirectoryInput ->
-                val dest: File = outputProvider.getContentLocation(directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
+                val dest: File = outputProvider.getContentLocation(
+                    directoryInput.name,
+                    directoryInput.contentTypes,
+                    directoryInput.scopes,
+                    Format.DIRECTORY
+                )
                 val dir: File = directoryInput.file
                 if (dir.exists() && dir.isDirectory) {
                     val file = File(dir, "lib")
@@ -50,10 +56,15 @@ class SoFileTransform(val extension: SoFileExtensions, val intermediatesDir: Fil
             }
             //jar文件不包含so文件直接拷贝给下一个
             input.jarInputs.forEach { jarInput: JarInput ->
-                val dest: File = outputProvider.getContentLocation(jarInput.name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-                executor.execute({
+                val dest: File = outputProvider.getContentLocation(
+                    jarInput.name,
+                    jarInput.contentTypes,
+                    jarInput.scopes,
+                    Format.JAR
+                )
+                executor.execute {
                     FileUtils.copyFile(jarInput.file, dest)
-                })
+                }
             }
         }
         executor.shutdown()

@@ -34,21 +34,25 @@ SoFileConfig {
     forceNeededRetainAllDependencies = true
     // 设置要删除的 so 库
     deleteSoLibs = [
-
+            'libtestLibrary.so',
+            'libnative-aar-lib.so',
+            'libsource.so',
+            'libblur-lib.so',
     ]
     // 设置要压缩的库 注意 libun7zip.so 为 7z 解压库不可压缩
-    compressSo2AssetsLibs = ['libtestLibrary.so',
-                             'libnative-aar-lib.so',
-                             'libsource.so',
-                             'libblur-lib.so',]
+    compressSo2AssetsLibs = [
+
+    ]
     // 排除依赖
-    excludeDependencies = ['libGLESv2.so',
-                           'libGLESv3.so',
-                           'libgraphicsenv.so',
-                           'libjnigraphics.so',
-                           'liblog.so',
-                           'liblz4.so',
-                           'liblzma.so']
+    excludeDependencies = [
+            'libGLESv2.so',
+            'libGLESv3.so',
+            'libgraphicsenv.so',
+            'libjnigraphics.so',
+            'liblog.so',
+            'liblz4.so',
+            'liblzma.so'
+    ]
     /**
      * 配置自定义依赖
      * 用于解决 a.so 并未声明依赖 b.so 并且内部通过 dlopen 打开 b.so
