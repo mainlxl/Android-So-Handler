@@ -32,11 +32,11 @@ class SoHandle(
     fun perform7z(inputLibDir: File, executor: ExecutorService, transformLib: File?) {
         if (inputLibDir.exists() && inputLibDir.isDirectory) {
             inputLibDir.listFiles()?.let { abis ->
+                recordNodeRoot = HashMap()
                 for (abi in abis) {
                     if (!abi.isDirectory || abi.list()?.isEmpty() == true) {
                         break
                     }
-                    recordNodeRoot = HashMap()
                     if (isRetainAllSoFileByABIDir(abi)) {
                         val concurrentHashMap = ConcurrentHashMap<String, HandleSoFileInfo>()
                         recordNodeRoot?.put(abi.name, concurrentHashMap)
