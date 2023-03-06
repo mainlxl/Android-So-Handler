@@ -3,9 +3,9 @@ package com.imf.plugin.so
 import com.android.utils.FileUtils
 import com.elf.ElfParser
 import com.google.gson.Gson
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -31,27 +31,28 @@ class SoHandle(
 
     fun perform7z(inputLibDir: File, executor: ExecutorService, transformLib: File?) {
         if (inputLibDir.exists() && inputLibDir.isDirectory) {
-            val abis = inputLibDir.listFiles()
-            for (abi in abis) {
-                if (!abi.isDirectory || abi.list()?.isEmpty()== true) {
-                    break
-                }
-                recordNodeRoot = HashMap()
-                if (isRetainAllSoFileByABIDir(abi)) {
-                    val concurrentHashMap = ConcurrentHashMap<String, HandleSoFileInfo>()
-                    recordNodeRoot?.put(abi.name, concurrentHashMap)
-                    executor.execute {
-                        handleSoFileByABIDir(
-                            abi,
-                            if (transformLib != null) File(
-                                transformLib,
-                                abi.name
-                            ) else null,
-                            assetsOutDestFile,
-                            extension.deleteSoLibs,
-                            extension.compressSo2AssetsLibs,
-                            concurrentHashMap
-                        )
+            inputLibDir.listFiles()?.let { abis ->
+                for (abi in abis) {
+                    if (!abi.isDirectory || abi.list()?.isEmpty() == true) {
+                        break
+                    }
+                    recordNodeRoot = HashMap()
+                    if (isRetainAllSoFileByABIDir(abi)) {
+                        val concurrentHashMap = ConcurrentHashMap<String, HandleSoFileInfo>()
+                        recordNodeRoot?.put(abi.name, concurrentHashMap)
+                        executor.execute {
+                            handleSoFileByABIDir(
+                                abi,
+                                if (transformLib != null) File(
+                                    transformLib,
+                                    abi.name
+                                ) else null,
+                                assetsOutDestFile,
+                                extension.deleteSoLibs,
+                                extension.compressSo2AssetsLibs,
+                                concurrentHashMap
+                            )
+                        }
                     }
                 }
             }
@@ -101,6 +102,10 @@ class SoHandle(
         if (!assetsAbiDir.exists()) {
             assetsAbiDir.mkdirs()
         }
+        val backupDir = if (extension.backupDeleteSo) {
+            FileUtils.mkdirs(File(assetsAbiDir.parentFile.path + File.separator + "backupDeleteSo"))
+        } else null
+
         abiDir.listFiles()?.toList()?.stream()?.filter {
             // 处理压缩
             val result = compressSo2AssetsLibs?.contains(it.name) ?: false
@@ -125,7 +130,17 @@ class SoHandle(
                     getNeededDependenciesBySoFile(abiDir, it, deleteSoLibs, compressSo2AssetsLibs)
                 recordMap[unmapLibraryName(name)] =
                     HandleSoFileInfo(false, getFileMD5ToString(it), parseNeededDependencies, null)
-                if (needDeleteInputSo) it.delete()
+                if (needDeleteInputSo) {
+                    if (extension.backupDeleteSo && backupDir != null) {
+                        val toDir =
+                            FileUtils.mkdirs(File(backupDir.path + File.separator + it.parentFile.name))
+                        FileUtils.copyFile(
+                            it,
+                            File(toDir, it.name)
+                        )
+                    }
+                    it.delete()
+                }
             }
             !result
         }?.forEach { file: File ->
@@ -136,7 +151,7 @@ class SoHandle(
                 recordMap[unmapLibraryName(file.name)] =
                     HandleSoFileInfo(false, null, parseNeededDependencies, null)
             }
-            transformLibDest?.let {FileUtils.copyFile(file, File(it, file.name)) }
+            transformLibDest?.let { FileUtils.copyFile(file, File(it, file.name)) }
         }
     }
 
@@ -228,8 +243,8 @@ class SoHandle(
             if (extension.excludeDependencies.isNullOrEmpty()) {
                 stream
             } else {
-                stream.filter {!extension.excludeDependencies!!.contains(it) }
-            }.map {unmapLibraryName(it) }.collect(Collectors.toList())
+                stream.filter { !extension.excludeDependencies!!.contains(it) }
+            }.map { unmapLibraryName(it) }.collect(Collectors.toList())
         }
     }
 

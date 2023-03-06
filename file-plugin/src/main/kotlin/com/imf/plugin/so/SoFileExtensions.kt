@@ -1,8 +1,12 @@
 package com.imf.plugin.so
 
-// 必须 open 否则 project.extensions.create 无法创建 SoFileExtensions 的代理子类
+/**
+ * 必须 open 否则 project.extensions.create 无法创建 SoFileExtensions 的代理子类
+ */
 open class SoFileExtensions {
-    // 是否开启插件
+    /**
+     * 是否开启插件
+     */
     var enable: Boolean? = null
         get() {
             if (field == null) {
@@ -11,14 +15,25 @@ open class SoFileExtensions {
             return field
         }
 
-    //7z
+    /**
+     * 7z
+     */
     var exe7zName: String = ""
     var abiFilters: Set<String>? = null
 
-    // 要移除的 so 库
+    /**
+     * 要移除的 so 库
+     */
     var deleteSoLibs: Set<String>? = null
 
-    // 压缩放在 assets 下的 so 库
+    /**
+     * 备份删除的 so
+     */
+    var backupDeleteSo: Boolean = true
+
+    /**
+     * 压缩放在 assets 下的 so 库
+     */
     var compressSo2AssetsLibs: Set<String>? = null
     var excludeBuildTypes: Set<String>? = null
 
@@ -31,7 +46,9 @@ open class SoFileExtensions {
      */
     var neededRetainAllDependencies: Boolean = true
 
-    // 强制保留所有依赖 对于 minSdkVersion 大于 23 的工程也保留所有依赖
+    /**
+     * 强制保留所有依赖 对于 minSdkVersion 大于 23 的工程也保留所有依赖
+     */
     var forceNeededRetainAllDependencies: Boolean? = null
 
     /**

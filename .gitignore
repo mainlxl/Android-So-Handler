@@ -11,3 +11,4 @@ local.properties
 /p7z/build/
 p7z/executable/p7z.aar
 apk/key.jks
+uploadAllLocal.sh

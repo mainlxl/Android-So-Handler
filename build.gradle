@@ -2,6 +2,7 @@
 buildscript {
     repositories {
         mavenLocal()
+        maven { url "https://jitpack.io" }
         maven { url uri("${rootDir}/maven") }
         maven { url "https://maven.aliyun.com/repository/google" }
         maven { url "https://maven.aliyun.com/repository/jcenter" }
@@ -21,6 +22,7 @@ buildscript {
 allprojects {
     repositories {
         mavenLocal()
+        maven { url "https://jitpack.io" }
         maven { url uri("${project.rootProject.rootDir}/maven") }
         maven { url "https://maven.aliyun.com/repository/google" }
         maven { url "https://maven.aliyun.com/repository/jcenter" }
