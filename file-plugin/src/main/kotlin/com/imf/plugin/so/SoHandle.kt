@@ -5,7 +5,6 @@ import com.elf.ElfParser
 import com.google.gson.Gson
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -128,17 +127,18 @@ class SoHandle(
             if (result) {
                 val parseNeededDependencies =
                     getNeededDependenciesBySoFile(abiDir, it, deleteSoLibs, compressSo2AssetsLibs)
+                val md5 = getFileMD5ToString(it)
                 recordMap[unmapLibraryName(name)] =
-                    HandleSoFileInfo(false, getFileMD5ToString(it), parseNeededDependencies, null)
+                    HandleSoFileInfo(false, md5, parseNeededDependencies, null)
                 if (needDeleteInputSo) {
-                    if (extension.backupDeleteSo && backupDir != null) {
+                    val soFile = if (extension.backupDeleteSo && backupDir != null) {
                         val toDir =
                             FileUtils.mkdirs(File(backupDir.path + File.separator + it.parentFile.name))
-                        FileUtils.copyFile(
-                            it,
-                            File(toDir, it.name)
-                        )
-                    }
+                        File(toDir, it.name).apply {
+                            FileUtils.copyFile(it, this)
+                        }
+                    } else it
+                    extension.onDeleteSo?.invoke(soFile, md5)
                     it.delete()
                 }
             }
