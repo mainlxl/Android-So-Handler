@@ -2,10 +2,7 @@
 
 ## 此仓库说明
 
-此仓库在原有仓库基础上修复了一些问题
-
-- 修复了 [A dependency must not be empty #3](https://github.com/Android-Mainli/Android-So-Handler/issues/3)
-- 将仓库接入 [Jitpack](https://jitpack.io/#mcxinyu/Android-So-Handler)，不用再复制 `maven` 文件了
+此仓库在原有仓库基础上修复了一些问题，请查看 [Release](https://github.com/mcxinyu/Android-So-Handler/releases/)
 
 ### Jitpack 接入方式
 
@@ -38,7 +35,9 @@ dependencies {
 }
 ```
 
-## 元仓库说明
+---
+
+## 以下是原仓库说明
 
 ** 减包工具集合 , 通过处理 so 库实现减包 **
 > PS：减 so 文件时很有必要了解 so
