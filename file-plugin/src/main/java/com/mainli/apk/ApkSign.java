@@ -26,6 +26,9 @@ public class ApkSign {
         String keystoreAlias = signingConfig.getKeyAlias();
         String keystoreAliasPassworld = signingConfig.getKeyPassword();
         File outputApk = new File(inputApk.getParentFile(), "_single.apk");
+        if (outputApk.exists()) {
+            boolean delete = outputApk.delete();
+        }
         String defaultType = KeyStore.getDefaultType();//jks
         try {
             KeyStore ks = KeyStore.getInstance(defaultType);

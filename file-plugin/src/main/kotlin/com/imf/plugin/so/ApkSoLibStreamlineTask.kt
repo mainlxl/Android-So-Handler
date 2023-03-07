@@ -37,12 +37,13 @@ open class ApkSoLibStreamlineTask @Inject constructor(
                 if (newApk?.exists() == true) {
                     val signApk = ApkSign.sign(newApk, variant)
                     newApk.delete()
+                    apkFile.renameTo(File(apkFile.parentFile, "backup-" + apkFile.name))
                     signApk.renameTo(apkFile)
                     val newSize = apkFile.length()
                     val oldSizeM = oldSize / 1024f / 1024f
                     val newSizeM = newSize / 1024f / 1024f
                     val changeSizeM = (oldSize - newSize) / 1024f / 1024f
-                    log("处理前Apk Size:${oldSizeM}M, 处理后Apk Size:${newSizeM}M, 优化 Size${changeSizeM}M")
+                    log("处理前Apk Size: ${oldSizeM}M, 处理后Apk Size: ${newSizeM}M, 优化 Size: ${changeSizeM}M")
                 }
             }
         }
@@ -69,6 +70,9 @@ open class ApkSoLibStreamlineTask @Inject constructor(
             return null
         }
         val outPutApk = File(apk.parentFile, "_streamlineApkBySoFile.apk")
+        if (outPutApk.exists()) {
+            outPutApk.delete()
+        }
         var inputZip: ZipFile? = null
         var zipOutputStream: ZipOutputStream? = null
         try {
@@ -76,6 +80,9 @@ open class ApkSoLibStreamlineTask @Inject constructor(
             val inputEntries = inputZip.entries()
             zipOutputStream = ZipOutputStream(FileOutputStream(outPutApk))
             val streamlineFile = File(apk.canonicalFile.parentFile, "streamline")
+            if (streamlineFile.exists()) {
+                streamlineFile.delete()
+            }
             while (inputEntries.hasMoreElements()) {
                 val inputZipEntry = inputEntries.nextElement()
                 val name = inputZipEntry.name
