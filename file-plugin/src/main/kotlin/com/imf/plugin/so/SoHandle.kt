@@ -138,7 +138,9 @@ class SoHandle(
                             FileUtils.copyFile(it, this)
                         }
                     } else it
-                    extension.onDeleteSo?.invoke(soFile, md5)
+                    extension.onDeleteSo?.invoke(soFile, md5)?.let { url ->
+                        recordMap[unmapLibraryName(name)]?.url = url
+                    }
                     it.delete()
                 }
             }

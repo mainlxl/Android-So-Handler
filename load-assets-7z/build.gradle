@@ -19,7 +19,7 @@ android {
 dependencies {
     implementation project(":load-hook")
     implementation project(":android-un7z")
-    implementation("androidx.annotation:annotation:1.6.0")
+    implementation("com.android.tools:annotations:30.4.2")
 }
 
 task sourcesJar(type: Jar) {

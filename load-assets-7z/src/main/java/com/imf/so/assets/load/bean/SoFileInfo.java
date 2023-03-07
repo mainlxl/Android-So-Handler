@@ -28,14 +28,16 @@ public class SoFileInfo {
     public String md5;
     public String compressName;
     public List<String> dependencies;
+    public String url;
 
-    private SoFileInfo(String libName, String abi, boolean saveCompressToAssets, String md5, String compressName, List<String> dependencies) {
+    private SoFileInfo(String libName, String abi, boolean saveCompressToAssets, String md5, String compressName, List<String> dependencies, String url) {
         this.libName = libName;
         this.abi = abi;
         this.saveCompressToAssets = saveCompressToAssets;
         this.md5 = md5;
         this.compressName = compressName;
         this.dependencies = dependencies;
+        this.url = url;
     }
 
 
@@ -69,7 +71,8 @@ public class SoFileInfo {
                     }
                 }
             }
-            return new SoFileInfo(libName, abi, saveCompressToAssets, md5, compressName, dependencies);
+            String aUrl = targetSoInfo.optString("url");
+            return new SoFileInfo(libName, abi, saveCompressToAssets, md5, compressName, dependencies, aUrl);
         }
         return null;
     }

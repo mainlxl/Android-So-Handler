@@ -33,7 +33,7 @@ open class SoFileExtensions {
      */
     var backupDeleteSo: Boolean = true
 
-    var onDeleteSo: ((File, String) -> Unit)? = null
+    var onDeleteSo: ((File, String) -> String)? = null
 
     /**
      * 压缩放在 assets 下的 so 库

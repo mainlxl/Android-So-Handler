@@ -39,6 +39,12 @@ SoFileConfig {
             'libsource.so',
             'libblur-lib.so',
     ]
+    /**
+     * 移除 so 时回调，这里可以做上传云端的逻辑
+     */
+    onDeleteSo = { File file, String md5 ->
+        return file.absolutePath.replace(".so", "_${md5}.so")
+    }
     // 设置要压缩的库 注意 libun7zip.so 为 7z 解压库不可压缩
     compressSo2AssetsLibs = [
 
