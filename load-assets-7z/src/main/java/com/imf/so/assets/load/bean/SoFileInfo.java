@@ -1,6 +1,5 @@
 package com.imf.so.assets.load.bean;
 
-import android.os.Build;
 import android.text.TextUtils;
 
 import com.imf.so.assets.load.utils.LoadUtils;
@@ -14,8 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 

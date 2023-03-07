@@ -40,10 +40,7 @@ dependencies {
 ## 以下是原仓库说明
 
 ** 减包工具集合 , 通过处理 so 库实现减包 **
-> PS：减 so 文件时很有必要了解 so
->
-来自那个三方或者一方库知己知彼，这里推荐我另一个项目 [AnalyzeSoPlugin](https://github.com/Android-Mainli/AnalyzeSoPlugin)
-> 去溯源
+> PS：减 so 文件时很有必要了解 so 来自那个三方或者一方库知己知彼，这里推荐我另一个项目 [AnalyzeSoPlugin](https://github.com/Android-Mainli/AnalyzeSoPlugin) 去溯源
 
 ## 特点如下:
 
@@ -233,7 +230,7 @@ SoLoadHookPlugin~~, 使用 ApkSoFileAdjustPlugin
    拖入 Android Studio 查看如：![size](apk/size.png)
    >
    > | apk 路径                                        | apk 大小 | 下载大小 |
-      > | ---------------------------------------------- | ------- | -------- |
+   > | ---------------------------------------------- | ------- | -------- |
    > | [app-debug-7z.apk](apk/app-debug-7z.apk)       | 2.5MB   | 2.4MB    |
    > | [app-debug-false.apk](apk/app-debug-false.apk) | 3.8MB   | 2.6MB    |
    > | [app-debug-true.apk](apk/app-debug-true.apk)   | 3.1MB   | 2.6MB    |

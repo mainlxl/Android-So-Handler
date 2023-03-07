@@ -1,5 +1,7 @@
 package com.imf.so.assets.load;
 
+import androidx.annotation.Nullable;
+
 import com.imf.so.assets.load.bean.SoFileInfo;
 
 import java.io.File;
@@ -11,5 +13,5 @@ import java.util.List;
  * 使用SoFileInfo#insertOrUpdateCache(saveLibsDir,File)完成下载后插入缓存
  */
 public interface NeedDownloadSoListener {
-    void onNeedDownloadSoInfo(File saveLibsDir, List<SoFileInfo> list);
+    void onNeedDownloadSoInfo(File saveLibsDir, @Nullable List<SoFileInfo> list);
 }

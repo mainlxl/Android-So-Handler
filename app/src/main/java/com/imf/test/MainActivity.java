@@ -1,10 +1,7 @@
 package com.imf.test;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +9,8 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.imf.so.assets.load.AssetsSoLoadBy7zFileManager;
 import com.imf.so.assets.load.NeedDownloadSoListener;
@@ -43,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNeedDownloadSoInfo(File saveLibsDir, List<SoFileInfo> list) {
                 downloadTextView.setText(new StringBuffer().append("需要下载:\n").append(list));
+                for (SoFileInfo soFileInfo : list) {
+                    soFileInfo.insertOrUpdateCache(saveLibsDir, new File(saveLibsDir, "lib" + soFileInfo.libName + ".so"));
+                }
             }
         });
         tv.setOnClickListener(new View.OnClickListener() {

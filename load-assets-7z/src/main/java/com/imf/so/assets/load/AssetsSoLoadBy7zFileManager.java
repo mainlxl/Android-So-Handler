@@ -65,7 +65,7 @@ public class AssetsSoLoadBy7zFileManager {
             sAppContext = context.getApplicationContext();
             //设置加载代理
             SoLoadHook.setSoLoadProxy(new AssetsSoLoadBy7z());
-            if (listener != null && sSoLoadInfo.isNeedDownloadSo()) {
+            if (listener != null) {
                 listener.onNeedDownloadSoInfo(sSaveLibsDir, sSoLoadInfo.getNeedDownloadList());
             }
         }
