@@ -61,6 +61,6 @@ public class AbiSoFileConfigInfo {
     }
 
     public boolean isNeedDownloadSo() {
-        return mNeedDownloadList == null ? false : !mNeedDownloadList.isEmpty();
+        return mNeedDownloadList != null && !mNeedDownloadList.isEmpty();
     }
 }

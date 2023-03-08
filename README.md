@@ -2,7 +2,9 @@
 
 ## 此仓库说明
 
-此仓库在原有仓库基础上修复了一些问题，请查看 [Release](https://github.com/mcxinyu/Android-So-Handler/releases/)
+此仓库在原有仓库基础上修复了一些问题，改进了一些功能。
+
+请查看 [Release](https://github.com/mcxinyu/Android-So-Handler/releases/) 更新日志。
 
 ### Jitpack 接入方式
 

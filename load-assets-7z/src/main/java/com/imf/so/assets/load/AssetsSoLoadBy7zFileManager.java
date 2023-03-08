@@ -37,33 +37,40 @@ public class AssetsSoLoadBy7zFileManager {
         LogUtil.setLogEnable(enable);
     }
 
+    public static boolean init(Context context) {
+        return init(context, null);
+    }
+
     public static boolean init(Context context, NeedDownloadSoListener listener) {
-        if (sSaveLibsDir == null) {
+        return init(context, false, listener);
+    }
+
+    public static boolean init(Context context, boolean reload, NeedDownloadSoListener listener) {
+        if (sSaveLibsDir == null || reload) {
             sSaveLibsDir = context.getDir(DIR_JNI_LIBS, Context.MODE_PRIVATE);
-            //读取进程名称
+            // 读取进程名称
             LoadUtils.getCurrentProcessNameByContext(context);
 
             JSONObject jsonObject = loadAssetsConfigJson(context);
             if (jsonObject == null) {
-                LogUtil.printError(true, "读取配置信息错误,导致初始化失败");
+                LogUtil.printError(true, " 读取配置信息错误, 导致初始化失败 ");
                 return false;
             }
             String[] supportedAbis = LoadUtils.supportedAbis();
-            for (int i = 0; i < supportedAbis.length; i++) {
-                String abi = supportedAbis[i];
+            for (String abi : supportedAbis) {
                 JSONObject abiInfo = jsonObject.optJSONObject(abi);
+                // 这里只需确定支持的即可 系统不允许加载不同架构 so 文件
                 if (abiInfo != null) {
-                    //这里只需确定支持的即可 系统不允许加载不同架构so文件
                     sSoLoadInfo = AbiSoFileConfigInfo.tryLoadByJson(sSaveLibsDir, abi, abiInfo);
                     break;
                 }
             }
             if (sSoLoadInfo == null) {
-                LogUtil.printError(true, "so配置abi,不支持该平台");
+                LogUtil.printError(true, "so 配置 abi, 不支持该平台 ");
                 return false;
             }
             sAppContext = context.getApplicationContext();
-            //设置加载代理
+            // 设置加载代理
             SoLoadHook.setSoLoadProxy(new AssetsSoLoadBy7z());
             if (listener != null) {
                 listener.onNeedDownloadSoInfo(sSaveLibsDir, sSoLoadInfo.getNeedDownloadList());
@@ -72,13 +79,8 @@ public class AssetsSoLoadBy7zFileManager {
         return true;
     }
 
-    public static boolean init(Context context) {
-        return init(context, null);
-    }
-
-
     /**
-     * 读取assets中配置信息详情
+     * 读取 assets 中配置信息详情
      *
      * @param context
      * @return 返回读取是否成功
@@ -88,20 +90,21 @@ public class AssetsSoLoadBy7zFileManager {
             String infoJson = LoadUtils.loadStringByInputStream(context.getAssets().open(ASSETS_CONFIG_INFO_PATH));
             return new JSONObject(infoJson);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
 
 
     /**
-     * loadLibrary so库加载入口
+     * loadLibrary so 库加载入口
      *
      * @param libName
      */
     public static void loadLibraryAndDependencies(String libName) {
         LogUtil.printDebug(libName, " - 加在进程:", LoadUtils.getCurrentProcessByCache());
         if (LoadRecordHelp.isLoaded(libName)) {
-            LogUtil.printDebug("重复加载:", libName);
+            LogUtil.printDebug(" 重复加载:", libName);
             return;
         }
         SoFileInfo soFileInfoByName = sSoLoadInfo.getSoFileInfoByName(libName);
@@ -125,12 +128,12 @@ public class AssetsSoLoadBy7zFileManager {
         }
         synchronized (getLoadingLibLock(libSoInfo)) {
             File source = libSoInfo.obtainSoFileBySaveLibsDir(sSaveLibsDir);
-            //已经解压过,存在so文件直接加载
+            // 已经解压过, 存在 so 文件直接加载
             if (source.exists()) {
                 LoadRecordHelp.loadSoFile(source.getAbsolutePath(), libSoInfo.libName);
-            } else if (libSoInfo.saveCompressToAssets && !TextUtils.isEmpty(libSoInfo.compressName)) {//解压加载
+            } else if (libSoInfo.saveCompressToAssets && !TextUtils.isEmpty(libSoInfo.compressName)) {// 解压加载
                 loadByExtractAsset(libSoInfo, source);
-            } else {//尝试正常加载 逻辑上不会触发到else
+            } else {// 尝试正常加载 逻辑上不会触发到 else
                 LoadRecordHelp.loadSoLibrary(libSoInfo.libName);
             }
         }
