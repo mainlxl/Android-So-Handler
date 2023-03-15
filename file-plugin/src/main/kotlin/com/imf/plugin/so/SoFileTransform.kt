@@ -75,6 +75,7 @@ class SoFileTransform(val extension: SoFileExtensions, val intermediatesDir: Fil
 
     //根据编译模式确定是否全部保留
     fun isRetainAllSoFileByVariantName(variantName: String): Boolean {
-        return extension.excludeBuildTypes?.contains(variantName) ?: false
+        return extension.excludeBuildTypes?.map { it.lowercase() }
+            ?.contains(variantName.lowercase()) ?: false
     }
 }

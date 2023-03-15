@@ -118,7 +118,7 @@ class SoFileAttachMergeTaskPlugin : SoFilePlugin() {
             if (pluginConfig.excludeBuildTypes.isNullOrEmpty()) {
                 true
             } else {
-                !pluginConfig.excludeBuildTypes!!.contains(it)
+                !pluginConfig.excludeBuildTypes!!.map { it.lowercase() }.contains(it.lowercase())
             }
         }.collect(Collectors.toSet())
         if (!buildTypes.isEmpty()) {
@@ -176,7 +176,7 @@ class ApkSoFileAdjustPlugin : SoFilePlugin() {
         val taskName = "ApkSoFileAdjust${capitalizeVariantName}"
         val excludeBuildTypes = pluginConfig.excludeBuildTypes
         if (!excludeBuildTypes.isNullOrEmpty()) {
-            if (excludeBuildTypes.contains(variantName)) {
+            if (excludeBuildTypes.map { it.lowercase() }.contains(variantName.lowercase())) {
                 return
             }
         }
