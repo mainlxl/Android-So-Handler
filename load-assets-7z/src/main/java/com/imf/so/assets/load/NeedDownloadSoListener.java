@@ -13,4 +13,8 @@ import java.util.List;
  */
 public interface NeedDownloadSoListener {
     void onNeedDownloadSoInfo(File saveLibsDir, @Nullable List<SoFileInfo> list);
+
+    void onConfigEmpty();
+
+    void onLibsEmpty();
 }

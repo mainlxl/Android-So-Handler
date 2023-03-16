@@ -37,7 +37,10 @@ open class ApkSoLibStreamlineTask @Inject constructor(
                 if (newApk?.exists() == true) {
                     val signApk = ApkSign.sign(newApk, variant)
                     newApk.delete()
-                    apkFile.renameTo(File(apkFile.parentFile, "backup-" + apkFile.name))
+                    if (pluginConfig.backupApk) {
+                        apkFile.renameTo(File(apkFile.parentFile, "backup-" + apkFile.name))
+                        apkFile.delete()
+                    }
                     signApk.renameTo(apkFile)
                     val newSize = apkFile.length()
                     val oldSizeM = oldSize / 1024f / 1024f

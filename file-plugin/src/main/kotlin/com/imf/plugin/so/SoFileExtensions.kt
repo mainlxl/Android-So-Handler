@@ -33,6 +33,11 @@ open class SoFileExtensions {
      */
     var backupDeleteSo: Boolean = true
 
+    /**
+     * 是否备份原来的 apk
+     */
+    var backupApk: Boolean = false
+
     var onDeleteSo: ((File, String) -> String)? = null
 
     /**

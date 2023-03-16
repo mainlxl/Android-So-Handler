@@ -54,6 +54,7 @@ public class AssetsSoLoadBy7zFileManager {
             JSONObject jsonObject = loadAssetsConfigJson(context);
             if (jsonObject == null) {
                 LogUtil.printError(true, " 读取配置信息错误, 导致初始化失败 ");
+                listener.onConfigEmpty();
                 return false;
             }
             String[] supportedAbis = LoadUtils.supportedAbis();
@@ -67,6 +68,7 @@ public class AssetsSoLoadBy7zFileManager {
             }
             if (sSoLoadInfo == null) {
                 LogUtil.printError(true, "so 配置 abi, 不支持该平台 ");
+                listener.onLibsEmpty();
                 return false;
             }
             sAppContext = context.getApplicationContext();

@@ -176,7 +176,8 @@ class ApkSoFileAdjustPlugin : SoFilePlugin() {
         val taskName = "ApkSoFileAdjust${capitalizeVariantName}"
         val excludeBuildTypes = pluginConfig.excludeBuildTypes
         if (!excludeBuildTypes.isNullOrEmpty()) {
-            if (excludeBuildTypes.map { it.lowercase() }.contains(variantName.lowercase())) {
+            if (excludeBuildTypes.map { it.lowercase() }
+                    .firstOrNull { variantName.lowercase().contains(it) } != null) {
                 return
             }
         }
