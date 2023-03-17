@@ -59,12 +59,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkSoLoad() {
         TextView downloadTextView = findViewById(R.id.download_text);
-        AssetsSoLoadBy7zFileManager.init(this, true, (saveLibsDir, list) -> {
-            if (!list.isEmpty()) {
-                downloadTextView.setText(new StringBuffer().append("需要下载:\n").append(list));
-                for (SoFileInfo soFileInfo : list) {
-                    soFileInfo.insertOrUpdateCache(saveLibsDir, new File(saveLibsDir, "lib" + soFileInfo.libName + ".so"));
+        AssetsSoLoadBy7zFileManager.init(this, new NeedDownloadSoListener() {
+            @Override
+            public void onNeedDownloadSoInfo(File file, List<SoFileInfo> list) {
+                if (!list.isEmpty()) {
+                    downloadTextView.setText(new StringBuffer().append("需要下载:\n").append(list));
+                    for (SoFileInfo soFileInfo : list) {
+                        soFileInfo.insertOrUpdateCache(file, new File(file, "lib" + soFileInfo.libName + ".so"));
+                    }
                 }
+            }
+
+            @Override
+            public void onConfigEmpty() {
+
+            }
+
+            @Override
+            public void onLibsEmpty() {
+
             }
         });
     }

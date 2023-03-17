@@ -17,6 +17,8 @@ open class SoFileExtensions {
             return field
         }
 
+    var useApktool: Boolean = false
+
     /**
      * 7z
      */

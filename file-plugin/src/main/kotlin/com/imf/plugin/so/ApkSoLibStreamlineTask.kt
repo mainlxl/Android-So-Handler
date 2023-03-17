@@ -1,10 +1,12 @@
 package com.imf.plugin.so
 
+import brut.androlib.ApkDecoder
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariantOutput
 import com.mainli.apk.ApkSign
 import com.mainli.apk.ZipUtil
+import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -33,12 +35,18 @@ open class ApkSoLibStreamlineTask @Inject constructor(
                     System.exit(2)
                 }
                 val oldSize = apkFile!!.length()
-                val newApk = streamlineApkSoFile(apkFile)
+                val newApk = if (pluginConfig.useApktool) {
+                    streamlineApkSoFileByApkTool(apkFile)
+                    streamlineApkSoFile(apkFile)
+                } else {
+                    streamlineApkSoFile(apkFile)
+                }
                 if (newApk?.exists() == true) {
                     val signApk = ApkSign.sign(newApk, variant)
                     newApk.delete()
                     if (pluginConfig.backupApk) {
                         apkFile.renameTo(File(apkFile.parentFile, "backup-" + apkFile.name))
+                    } else {
                         apkFile.delete()
                     }
                     signApk.renameTo(apkFile)
@@ -66,6 +74,44 @@ open class ApkSoLibStreamlineTask @Inject constructor(
             }
         }
         return outputFile
+    }
+
+    open fun streamlineApkSoFileByApkTool(apk: File?): File? {
+        if (apk == null || !apk.exists()) {
+            return null
+        }
+        val outPutApk = File(apk.parentFile, "_streamlineApkBySoFile.apk")
+        if (outPutApk.exists()) {
+            outPutApk.delete()
+        }
+
+        val apkDecoder = ApkDecoder()
+        apkDecoder.setApkFile(apk)
+        val outDir = File(apk.parentFile.path + File.separator + apk.nameWithoutExtension)
+        outDir.delete()
+        apkDecoder.setOutDir(outDir)
+        apkDecoder.decode()
+
+        val streamlineFile = File(apk.canonicalFile.parentFile, "streamlineByApktool")
+        streamlineFile.delete()
+        streamlineFile.mkdirs()
+
+        outDir.listFiles()?.forEach {
+            if (it.isDirectory) {
+                if (it.name.startsWith("lib")) {
+                    val lib = File(streamlineFile, "lib")
+                    FileUtils.copyDirectory(it, lib)
+
+                    if (pluginConfig.backupDeleteSo) {
+                        val backupDeleteSo = File(lib, "backupDeleteSo")
+                        backupDeleteSo.delete()
+                        FileUtils.copyDirectory(it, backupDeleteSo)
+                    }
+                }
+            }
+        }
+
+        return null
     }
 
     open fun streamlineApkSoFile(apk: File?): File? {

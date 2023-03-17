@@ -26,6 +26,7 @@ SoFileConfig {
     // 设置 debug 下不删除与压缩 so 库
 //    excludeBuildTypes = ['debug']
 
+    useApktool = true
     /**
      * 强制保留所有依赖
      * 默认为 false 时
