@@ -1,9 +1,13 @@
 package com.imf.plugin.so
 
+import brut.androlib.Androlib
 import brut.androlib.ApkDecoder
+import brut.androlib.options.BuildOptions
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariantOutput
+import com.elf.ElfParser
+import com.google.gson.Gson
 import com.mainli.apk.ApkSign
 import com.mainli.apk.ZipUtil
 import org.apache.commons.io.FileUtils
@@ -37,7 +41,6 @@ open class ApkSoLibStreamlineTask @Inject constructor(
                 val oldSize = apkFile!!.length()
                 val newApk = if (pluginConfig.useApktool) {
                     streamlineApkSoFileByApkTool(apkFile)
-                    streamlineApkSoFile(apkFile)
                 } else {
                     streamlineApkSoFile(apkFile)
                 }
@@ -90,28 +93,194 @@ open class ApkSoLibStreamlineTask @Inject constructor(
         val outDir = File(apk.parentFile.path + File.separator + apk.nameWithoutExtension)
         outDir.delete()
         apkDecoder.setOutDir(outDir)
+        apkDecoder.setForceDelete(true)
+        apkDecoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_NONE)
         apkDecoder.decode()
 
-        val streamlineFile = File(apk.canonicalFile.parentFile, "streamlineByApktool")
-        streamlineFile.delete()
-        streamlineFile.mkdirs()
+        val streamlineDir = File(apk.canonicalFile.parentFile, "apktoolline")
+        streamlineDir.delete()
+        streamlineDir.mkdirs()
 
-        outDir.listFiles()?.forEach {
-            if (it.isDirectory) {
-                if (it.name.startsWith("lib")) {
-                    val lib = File(streamlineFile, "lib")
-                    FileUtils.copyDirectory(it, lib)
-
-                    if (pluginConfig.backupDeleteSo) {
-                        val backupDeleteSo = File(lib, "backupDeleteSo")
-                        backupDeleteSo.delete()
-                        FileUtils.copyDirectory(it, backupDeleteSo)
-                    }
+        outDir.listFiles()?.forEach { libDir ->
+            if (libDir.isDirectory) {
+                if (libDir.name.startsWith("lib")) {
+                    handleZipSo(libDir, streamlineDir)
+                    handleDeleteSo(libDir, streamlineDir)
+                    handleOtherSo(libDir)
                 }
             }
         }
+        val assetsDir = outDir.resolve("assets${File.separator}jniLibs")
+        if (!assetsDir.exists()) {
+            assetsDir.mkdirs()
+        }
+        com.android.utils.FileUtils.writeToFile(
+            assetsDir.resolve("info.json"),
+            Gson().toJson(record)
+        )
 
-        return null
+        val file = outDir.parentFile.resolve("_" + outDir.name + ".apk")
+        Androlib(
+            BuildOptions().apply {
+                useAapt2 = true
+            }
+        ).build(outDir, file)
+        outDir.delete()
+        return file
+    }
+
+    private var record: HashMap<String, HashMap<String, HandleSoFileInfo>> = hashMapOf()
+    private val cmd =
+        "${pluginConfig.exe7zName} a %s %s -t7z -mx=9 -m0=LZMA2 -ms=10m -mf=on -mhc=on -mmt=on -mhcf"
+
+    private fun handleOtherSo(libDir: File) {
+        libDir.listFiles()?.forEach { abi ->
+            if (abi.isDirectory) {
+                if (record[abi.name] == null) {
+                    record[abi.name] = hashMapOf()
+                }
+                abi.listFiles()
+                    ?.forEach { aSo ->
+                        record[abi.name]?.set(
+                            aSo.nameWithoutExtension.substring(3),
+                            HandleSoFileInfo(
+                                false,
+                                null,
+                                aSo.getNeededDependencies(),
+                                null
+                            )
+                        )
+                    }
+            }
+        }
+    }
+
+    private fun handleZipSo(libDir: File, streamlineDir: File) {
+        if (pluginConfig.compressSo2AssetsLibs.isNullOrEmpty()) {
+            return
+        }
+        libDir.listFiles()?.forEach { abi ->
+            if (abi.isDirectory) {
+                if (record[abi.name] == null) {
+                    record[abi.name] = hashMapOf()
+                }
+                abi.listFiles()
+                    ?.filter {
+                        pluginConfig.compressSo2AssetsLibs?.contains(it.name) == true &&
+                                pluginConfig.excludeDependencies?.contains(it.name) == false
+                    }
+                    ?.forEach { aSo ->
+                        val dependencies = aSo.getNeededDependencies()
+
+                        val md5 = getFileMD5ToString(aSo)
+
+                        val newSo = aSo.parentFile.resolve(md5)
+                        aSo.renameTo(newSo)
+                        renameList.add(aSo.name)
+
+                        val assetsAbiDir =
+                            libDir.parentFile.resolve("assets${File.separator}jniLibs${File.separator}${aSo.parentFile.name}")
+                        if (!assetsAbiDir.exists()) {
+                            assetsAbiDir.mkdirs()
+                        }
+
+                        val key = aSo.nameWithoutExtension.substring(3)
+                        val destFile = assetsAbiDir.resolve("$key&$md5.7z")
+                        val exeCmd = String.format(cmd, destFile.absolutePath, newSo.absolutePath)
+                        Runtime.getRuntime().exec(exeCmd).waitFor()
+
+                        record[abi.name]?.set(
+                            aSo.nameWithoutExtension.substring(3),
+                            HandleSoFileInfo(
+                                true,
+                                md5,
+                                dependencies,
+                                destFile.name
+                            )
+                        )
+
+                        newSo.delete()
+                    }
+            }
+        }
+    }
+
+    private fun handleDeleteSo(libDir: File, streamlineDir: File) {
+        if (pluginConfig.deleteSoLibs.isNullOrEmpty()) {
+            return
+        }
+
+        val backupDeleteSoDir = File(streamlineDir, "backupDeleteSo")
+        backupDeleteSoDir.delete()
+        libDir.listFiles()?.forEach { abi ->
+            if (abi.isDirectory) {
+                if (record[abi.name] == null) {
+                    record[abi.name] = hashMapOf()
+                }
+                abi.listFiles()
+                    ?.filter {
+                        pluginConfig.deleteSoLibs?.contains(it.name) == true &&
+                                pluginConfig.excludeDependencies?.contains(it.name) == false
+                    }
+                    ?.forEach { aSo ->
+                        if (pluginConfig.backupDeleteSo) {
+                            FileUtils.copyFile(
+                                aSo,
+                                backupDeleteSoDir.resolve(abi.name).resolve(aSo.name)
+                            )
+                        }
+                        val md5 = getFileMD5ToString(aSo)
+                        val url = pluginConfig.onDeleteSo?.invoke(aSo, md5)
+                        record[abi.name]?.set(
+                            aSo.nameWithoutExtension.substring(3),
+                            HandleSoFileInfo(
+                                false,
+                                md5,
+                                aSo.getNeededDependencies(),
+                                null,
+                                url
+                            )
+                        )
+                        aSo.delete()
+                    }
+            }
+        }
+    }
+
+    private val renameList = mutableSetOf<String>();
+
+    private fun File.getNeededDependencies(): List<String>? {
+        if (pluginConfig.deleteSoLibs.isNullOrEmpty() && pluginConfig.compressSo2AssetsLibs.isNullOrEmpty()) {
+            return null
+        }
+
+        var set = mutableSetOf<String>()
+
+        ElfParser(this).use {
+            set.addAll(it.parseNeededDependencies())
+        }
+
+        // 在不需要全部依赖下, 尝试进行依赖简化
+        if (!pluginConfig.neededRetainAllDependencies && set.isNotEmpty()) {
+            set = set.filter {
+                pluginConfig.deleteSoLibs!!.contains(it) ||
+                        pluginConfig.compressSo2AssetsLibs!!.contains(it)
+            }.filter {
+                renameList.contains(it) || this.parentFile.resolve(it).exists()
+            }.toMutableSet()
+        }
+
+        // 扩展自定义依赖
+        pluginConfig.customDependencies?.get(name)?.let {
+            set.addAll(it)
+        }
+
+        // libxxx.so -> xxx
+        val list = set.filter { pluginConfig.excludeDependencies?.contains(it) == false }
+            .map { it.substring(3).substringBefore(".so") }
+
+        return if (set.isEmpty()) null
+        else list
     }
 
     open fun streamlineApkSoFile(apk: File?): File? {

@@ -40,6 +40,9 @@ open class SoFileExtensions {
      */
     var backupApk: Boolean = false
 
+    /**
+     * 删除 so 的回调， File 是 so 文件，String 是 md5
+     */
     var onDeleteSo: ((File, String) -> String)? = null
 
     /**

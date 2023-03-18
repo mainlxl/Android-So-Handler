@@ -35,11 +35,9 @@ SoFileConfig {
     forceNeededRetainAllDependencies = true
     // 设置要删除的 so 库
     deleteSoLibs = [
-            'libtestLibrary.so',
-            'libnative-aar-lib.so',
-            'libsource.so',
-            'libblur-lib.so',
+
     ]
+    backupApk = true
     /**
      * 移除 so 时回调，这里可以做上传云端的逻辑
      */
@@ -48,7 +46,10 @@ SoFileConfig {
     }
     // 设置要压缩的库 注意 libun7zip.so 为 7z 解压库不可压缩
     compressSo2AssetsLibs = [
-
+            'libtestLibrary.so',
+            'libnative-aar-lib.so',
+            'libsource.so',
+            'libblur-lib.so',
     ]
     // 排除依赖
     excludeDependencies = [
