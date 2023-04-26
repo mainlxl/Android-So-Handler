@@ -16,8 +16,8 @@ buildscript {
     dependencies {
         // ...
         if (userSoPlugin) {
-            classpath("com.github.mcxinyu.Android-So-Handler:load-hook-plugin:${Versions.so_plugin_version}")
-            classpath("com.github.mcxinyu.Android-So-Handler:file-plugin:${Versions.so_plugin_version}")
+            classpath("com.github.Android-Mainli:Android-So-Handler:load-hook-plugin:${Versions.so_plugin_version}")
+            classpath("com.github.Android-Mainli:Android-So-Handler:file-plugin:${Versions.so_plugin_version}")
         }
     }
 }
@@ -28,8 +28,8 @@ repositories {
     maven("https://jitpack.io")
 }
 dependencies {
-    implementation "com.github.mcxinyu.Android-So-Handler:load-hook:${Versions.so_plugin_version}"
-    implementation "com.github.mcxinyu.Android-So-Handler:load-assets-7z:${Versions.so_plugin_version}"
+    implementation "com.github.Android-Mainli:Android-So-Handler:load-hook:${Versions.so_plugin_version}"
+    implementation "com.github.Android-Mainli:Android-So-Handler:load-assets-7z:${Versions.so_plugin_version}"
 }
 ```
 
