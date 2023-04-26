@@ -5,7 +5,6 @@ import com.elf.ElfParser
 import com.google.gson.Gson
 import java.io.File
 import java.io.IOException
-import java.util.Map
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -30,36 +29,40 @@ class SoHandle(
 
 
     fun perform7z(inputLibDir: File, executor: ExecutorService, transformLib: File?) {
-        if (inputLibDir.exists() && inputLibDir.isDirectory()) {
-            val abis = inputLibDir.listFiles()
-            for (abi in abis) {
-                if (!abi.isDirectory || abi.list().isEmpty()) {
-                    break
-                }
-                recordNodeRoot = HashMap<String, ConcurrentHashMap<String, HandleSoFileInfo>>()
-                if (isRetainAllSoFileByABIDir(abi)) {
-                    val concurrentHashMap = ConcurrentHashMap<String, HandleSoFileInfo>()
-                    recordNodeRoot?.put(abi.name, concurrentHashMap)
-                    executor.execute({
-                        handleSoFileByABIDir(
-                            abi,
-                            if (transformLib != null) File(transformLib, abi.name) else null,
-                            assetsOutDestFile,
-                            extension.deleteSoLibs,
-                            extension.compressSo2AssetsLibs, concurrentHashMap
-                        )
-                    })
+        if (inputLibDir.exists() && inputLibDir.isDirectory) {
+            inputLibDir.listFiles()?.let { abis ->
+                recordNodeRoot = HashMap()
+                for (abi in abis) {
+                    if (!abi.isDirectory || abi.list()?.isEmpty() == true) {
+                        break
+                    }
+                    if (isRetainAllSoFileByABIDir(abi)) {
+                        val concurrentHashMap = ConcurrentHashMap<String, HandleSoFileInfo>()
+                        recordNodeRoot?.put(abi.name, concurrentHashMap)
+                        executor.execute {
+                            handleSoFileByABIDir(
+                                abi,
+                                if (transformLib != null) File(
+                                    transformLib,
+                                    abi.name
+                                ) else null,
+                                assetsOutDestFile,
+                                extension.deleteSoLibs,
+                                extension.compressSo2AssetsLibs,
+                                concurrentHashMap
+                            )
+                        }
+                    }
                 }
             }
-
         }
     }
 
     fun singlePerform7z(inputLibDir: File, transformLib: File?) {
         perform7z(inputLibDir, executor, transformLib)
         executor.shutdown()
-        while (true) {//等待所有任务都执行结束
-            if (executor.isTerminated()) {//所有的子线程都结束了
+        while (true) {// 等待所有任务都执行结束
+            if (executor.isTerminated()) {// 所有的子线程都结束了
                 break
             }
         }
@@ -67,7 +70,7 @@ class SoHandle(
     }
 
 
-    //处理so库,压缩,删除等操作
+    // 处理 so 库, 压缩, 删除等操作
     private fun handleSoFileByABIDir(
         abiDir: File,
         transformLibDest: File?,
@@ -77,15 +80,13 @@ class SoHandle(
         recordMap: ConcurrentHashMap<String, HandleSoFileInfo>
     ) {
         if (!abiDir.exists() || !abiDir.isDirectory) {
-            log("${abiDir.absolutePath}不是文件夹")
             return
         }
         if (deleteSoLibs.isNullOrEmpty() && compressSo2AssetsLibs.isNullOrEmpty()) {
-            log("没有要处理(删除|压缩)的SO库")
             FileUtils.copyDirectory(abiDir, transformLibDest)
             return
         }
-        //transform中处理so时不复制到out目录则为删除不需要额外删除
+        //transform 中处理 so 时不复制到 out 目录则为删除不需要额外删除
         val needDeleteInputSo = if (transformLibDest == null) {
             true
         } else {
@@ -94,14 +95,18 @@ class SoHandle(
             }
             false
         }
-        if (transformLibDest?.exists() ?: false) {
-            transformLibDest?.mkdirs()
+        if (transformLibDest?.exists() == true) {
+            transformLibDest.mkdirs()
         }
         if (!assetsAbiDir.exists()) {
             assetsAbiDir.mkdirs()
         }
-        abiDir.listFiles().toList().stream().filter({
-            //处理压缩
+        val backupDir = if (extension.backupDeleteSo) {
+            FileUtils.mkdirs(File(assetsAbiDir.parentFile.path + File.separator + "backupDeleteSo"))
+        } else null
+
+        abiDir.listFiles()?.toList()?.stream()?.filter {
+            // 处理压缩
             val result = compressSo2AssetsLibs?.contains(it.name) ?: false
             if (result) {
                 val parseNeededDependencies =
@@ -115,20 +120,33 @@ class SoHandle(
                 )
             }
             !result
-        }).filter({
-            //处理删除
+        }?.filter {
+            // 处理删除
             val name = it.name
             val result = deleteSoLibs?.contains(name) ?: false
             if (result) {
                 val parseNeededDependencies =
                     getNeededDependenciesBySoFile(abiDir, it, deleteSoLibs, compressSo2AssetsLibs)
+                val md5 = getFileMD5ToString(it)
                 recordMap[unmapLibraryName(name)] =
-                    HandleSoFileInfo(false, getFileMD5ToString(it), parseNeededDependencies, null)
-                if (needDeleteInputSo) it.delete()
+                    HandleSoFileInfo(false, md5, parseNeededDependencies, null)
+                if (needDeleteInputSo) {
+                    val soFile = if (extension.backupDeleteSo && backupDir != null) {
+                        val toDir =
+                            FileUtils.mkdirs(File(backupDir.path + File.separator + it.parentFile.name))
+                        File(toDir, it.name).apply {
+                            FileUtils.copyFile(it, this)
+                        }
+                    } else it
+                    extension.onDeleteSo?.invoke(soFile, md5)?.let { url ->
+                        recordMap[unmapLibraryName(name)]?.url = url
+                    }
+                    it.delete()
+                }
             }
             !result
-        }).forEach { file: File ->
-            //其余只是遍历得到依赖
+        }?.forEach { file: File ->
+            // 其余只是遍历得到依赖
             val parseNeededDependencies =
                 getNeededDependenciesBySoFile(abiDir, file, deleteSoLibs, compressSo2AssetsLibs)
             if (!parseNeededDependencies.isNullOrEmpty()) {
@@ -141,7 +159,7 @@ class SoHandle(
 
     private val renameList = mutableSetOf<String>();
 
-    //压缩操作
+    // 压缩操作
     private fun compressSoFileToAssets(
         src: File,
         assetsABIDir: File,
@@ -182,7 +200,7 @@ class SoHandle(
                 elfParser = ElfParser(soFile)
                 dependenciesSet.addAll(elfParser.parseNeededDependencies())
             } catch (ignored: Exception) {
-                log("so解析失败:${soFile.absolutePath}")
+                log("so 解析失败:${soFile.absolutePath}")
             } finally {
                 elfParser?.close()
             }
@@ -191,8 +209,8 @@ class SoHandle(
             // be picked up by the system's resolver, if not, an exception will be thrown by the
             // next statement, so its better to try twice.
         }
-        //在不需要全部依赖下,尝试进行依赖简化
-        log("是否全部保留依赖:${extension.neededRetainAllDependencies}------解析出的依赖:${dependenciesSet}")
+        // 在不需要全部依赖下, 尝试进行依赖简化
+        log("是否全部保留依赖: ${extension.neededRetainAllDependencies}------ 解析出的依赖: ${dependenciesSet}")
         if (!extension.neededRetainAllDependencies) {
             if (!dependenciesSet.isNullOrEmpty()) {
                 dependenciesSet = dependenciesSet.stream()
@@ -204,9 +222,15 @@ class SoHandle(
                     }.collect(Collectors.toSet())
             }
         }
-        //扩展自定义依赖
+        // 扩展自定义依赖
         val key = soFile.name
-        log("配置自定义依赖前:${dependenciesSet}----- key:${key},${extension.customDependencies?.get(key)}")
+        log(
+            " 配置自定义依赖前:${dependenciesSet}----- key:${key},${
+                extension.customDependencies?.get(
+                    key
+                )
+            }"
+        )
         if (extension.customDependencies?.containsKey(key) ?: false) {
             val custom: List<String>? = extension.customDependencies?.get(key)
             if (!custom.isNullOrEmpty()) {
@@ -226,10 +250,6 @@ class SoHandle(
         }
     }
 
-    private fun log(message: String) {
-//        println(message)
-    }
-
     //liblog.so -> log
     fun unmapLibraryName(mappedLibraryName: String): String {
         return mappedLibraryName.substring(3, mappedLibraryName.length - 3)
@@ -244,8 +264,8 @@ class SoHandle(
     }
 
 
-    //根据abi确定是保留jni
-    fun isRetainAllSoFileByABIDir(abiDir: File): Boolean {
+    // 根据 abi 确定是保留 jni
+    private fun isRetainAllSoFileByABIDir(abiDir: File): Boolean {
         if (extension.abiFilters == null) {
             return true;
         }
@@ -254,7 +274,10 @@ class SoHandle(
 
     fun resultWriteToFile() {
         recordNodeRoot?.let {
-            FileUtils.writeToFile(File(assetsOutDestFile, "info.json"), Gson().toJson(recordNodeRoot))
+            FileUtils.writeToFile(
+                File(assetsOutDestFile, "info.json"),
+                Gson().toJson(recordNodeRoot)
+            )
             assetsOutDestManager.finishCompressed();
         }
         recordNodeRoot = null;

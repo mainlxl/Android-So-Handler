@@ -2,7 +2,10 @@ plugins {
     id 'java'
 }
 
-
 dependencies {
 }
 
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}

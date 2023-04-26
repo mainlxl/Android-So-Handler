@@ -1,10 +1,7 @@
 package com.imf.test;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +9,8 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.imf.so.assets.load.AssetsSoLoadBy7zFileManager;
 import com.imf.so.assets.load.NeedDownloadSoListener;
@@ -36,35 +35,51 @@ public class MainActivity extends AppCompatActivity {
         mCache = findViewById(R.id.cache_text);
         ImageView image = findViewById(R.id.image);
         final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.image);
-        final TextView downloadTextView = findViewById(R.id.download_text);
         updateCacheDir();
         TextView tv = findViewById(R.id.sample_text);
-        AssetsSoLoadBy7zFileManager.init(this, new NeedDownloadSoListener() {
-            @Override
-            public void onNeedDownloadSoInfo(File saveLibsDir, List<SoFileInfo> list) {
-                downloadTextView.setText(new StringBuffer().append("需要下载:\n").append(list));
-            }
-        });
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StringBuilder stringBuilder = new StringBuilder();
-                v.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadSourceLib();
-                        stringBuilder.append("源码引入: ").append(NativeSourceTest.stringFromJNI()).append('\n');
-                        stringBuilder.append("aar引入: ").append(NativeLibTest.stringFromJNI()).append('\n');
-                        stringBuilder.append("子工程引入: ").append(NativeTestLibrary.stringFromJNI()).append('\n');
-                        stringBuilder.append("Maven引入: >背景图片变模糊<");
-                        tv.setText(stringBuilder.toString());
-                        image.setImageBitmap(BitmapBlur.blur(bitmap, 9));
-                        updateCacheDir();
-                    }
-                }, 100);
-            }
+        checkSoLoad();
+        tv.setOnClickListener(v -> {
+            StringBuilder stringBuilder = new StringBuilder();
+            v.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    loadSourceLib();
+                    stringBuilder.append("源码引入: ").append(NativeSourceTest.stringFromJNI()).append('\n');
+                    stringBuilder.append("aar引入: ").append(NativeLibTest.stringFromJNI()).append('\n');
+                    stringBuilder.append("子工程引入: ").append(NativeTestLibrary.stringFromJNI()).append('\n');
+                    stringBuilder.append("Maven引入: >背景图片变模糊<");
+                    tv.setText(stringBuilder.toString());
+                    image.setImageBitmap(BitmapBlur.blur(bitmap, 9));
+                    updateCacheDir();
+                }
+            }, 100);
         });
 
+    }
+
+    private void checkSoLoad() {
+        TextView downloadTextView = findViewById(R.id.download_text);
+        AssetsSoLoadBy7zFileManager.init(this, new NeedDownloadSoListener() {
+            @Override
+            public void onNeedDownloadSoInfo(File file, List<SoFileInfo> list) {
+                if (!list.isEmpty()) {
+                    downloadTextView.setText(new StringBuffer().append("需要下载:\n").append(list));
+                    for (SoFileInfo soFileInfo : list) {
+                        soFileInfo.insertOrUpdateCache(file, new File(file, "lib" + soFileInfo.libName + ".so"));
+                    }
+                }
+            }
+
+            @Override
+            public void onConfigEmpty() {
+
+            }
+
+            @Override
+            public void onLibsEmpty() {
+
+            }
+        });
     }
 
     private void loadSourceLib() {
@@ -91,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "删除失败: " + saveLibsDir, Toast.LENGTH_SHORT).show();
         }
         updateCacheDir();
+        checkSoLoad();
     }
 
     public void onExit(View view) {

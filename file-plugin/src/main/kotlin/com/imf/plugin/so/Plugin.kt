@@ -8,6 +8,7 @@ import org.gradle.api.Project
 import java.io.*
 import java.util.Collections
 import java.util.stream.Collectors
+import java.util.zip.ZipFile
 
 fun log(msg: Any) {
 //        project.logger.info("[ApkSoLibStreamlineTask]: ${msg}")
@@ -43,7 +44,32 @@ abstract class SoFilePlugin : Plugin<Project> {
             it.isTransitive = false
             it.setExtendsFrom(Collections.emptyList())
         }
+
         val osdetector = project.extensions.getByType(OsDetector::class.java)
+
+        //region 尝试查找 aar 里面的可执行文件
+        val depAAR = project.dependencies.add(
+            p7zConfig.name, mapOf(
+                "group" to "com.github.mcxinyu.Android-So-Handler",
+                "name" to "p7z",
+                "classifier" to "all",
+                "version" to "0.0.9-fix1",
+                "ext" to "aar"
+            )
+        )
+        runCatching {
+            val aar = p7zConfig.fileCollection(depAAR).singleFile
+            ZipFile(aar).unzipTo(aar.parentFile)
+            val file = aar.parentFile.listFiles()?.firstOrNull {
+                it.name.contains(osdetector.classifier)
+            } ?: throw FileNotFoundException()
+            if (!file.canExecute() && !file.setExecutable(true)) {
+                throw GradleException("Cannot set ${file} as executable")
+            }
+            return file.absolutePath
+        }
+        //endregion
+
         val dep = project.dependencies.add(
             p7zConfig.name, mapOf<String, String>(
                 "group" to "com.mainli",
@@ -53,13 +79,12 @@ abstract class SoFilePlugin : Plugin<Project> {
                 "ext" to "exe"
             )
         )
-        try {
+        runCatching {
             val file = p7zConfig.fileCollection(dep).singleFile
             if (!file.canExecute() && !file.setExecutable(true)) {
-                throw  GradleException("Cannot set ${file} as executable")
+                throw GradleException("Cannot set ${file} as executable")
             }
             return file.absolutePath
-        } catch (e: Exception) {
         }
         val os = System.getenv("OS")?.lowercase()
         if (os != null && os.contains("windows")) {
@@ -93,7 +118,7 @@ class SoFileAttachMergeTaskPlugin : SoFilePlugin() {
             if (pluginConfig.excludeBuildTypes.isNullOrEmpty()) {
                 true
             } else {
-                !pluginConfig.excludeBuildTypes!!.contains(it)
+                !pluginConfig.excludeBuildTypes!!.map { it.lowercase() }.contains(it.lowercase())
             }
         }.collect(Collectors.toSet())
         if (!buildTypes.isEmpty()) {
@@ -145,17 +170,23 @@ class ApkSoFileAdjustPlugin : SoFilePlugin() {
         }
     }
 
-    fun createTask(project: Project, variantName: String) {
+    private fun createTask(project: Project, variantName: String) {
         val capitalizeVariantName =
             variantName.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
         val taskName = "ApkSoFileAdjust${capitalizeVariantName}"
         val excludeBuildTypes = pluginConfig.excludeBuildTypes
         if (!excludeBuildTypes.isNullOrEmpty()) {
-            if (excludeBuildTypes.contains(variantName)) {
+            if (excludeBuildTypes.map { it.lowercase() }
+                    .firstOrNull { variantName.lowercase().contains(it) } != null) {
                 return
             }
         }
         if (project.tasks.findByPath(taskName) == null) {
+            val tasks =
+                setOf(project.tasks.findByPath("package${capitalizeVariantName}")).filterNotNull()
+            if (tasks.isEmpty()) {
+                return
+            }
             val task = project.tasks.create(
                 taskName,
                 ApkSoLibStreamlineTask::class.java,
@@ -166,9 +197,8 @@ class ApkSoFileAdjustPlugin : SoFilePlugin() {
             )
             task.group = "Build"
             task.description = "进行so共享库处理"
-            task.setMustRunAfter(setOf(project.tasks.findByPath("package${capitalizeVariantName}")))
+            task.setMustRunAfter(tasks)
             project.tasks.findByPath("assemble${capitalizeVariantName}")?.dependsOn?.add(task)
-
         }
     }
 }
