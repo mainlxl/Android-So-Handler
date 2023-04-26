@@ -2,7 +2,7 @@
 
 ### Jitpack 接入方式
 
-[![](https://jitpack.io/v/mcxinyu/Android-So-Handler.svg)](https://jitpack.io/#mcxinyu/Android-So-Handler)
+[![](https://jitpack.io/v/Android-Mainli/Android-So-Handler.svg)](https://jitpack.io/#Android-Mainli/Android-So-Handler)
 
 因为接入 Jitpack 后，暂时没有合并到主仓库，所以接入方式（maven 仓库链接）需要先按下面方法修改，其他的依旧按原仓库说明操作。
 
