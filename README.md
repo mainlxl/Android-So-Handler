@@ -35,8 +35,6 @@ dependencies {
 
 ---
 
-## 以下是原仓库说明
-
 ** 减包工具集合 , 通过处理 so 库实现减包 **
 > PS：减 so 文件时很有必要了解 so 来自那个三方或者一方库知己知彼，这里推荐我另一个项目 [AnalyzeSoPlugin](https://github.com/Android-Mainli/AnalyzeSoPlugin) 去溯源
 
