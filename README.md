@@ -229,6 +229,8 @@ SoLoadHookPlugin~~, 使用 ApkSoFileAdjustPlugin
    > | [app-debug-false.apk](apk/app-debug-false.apk) | 3.8MB   | 2.6MB    |
    > | [app-debug-true.apk](apk/app-debug-true.apk)   | 3.1MB   | 2.6MB    |
 
-欢迎加我微信进行交流 x
+
+
+感谢[mcxinyu](https://github.com/mcxinyu)的贡献。也欢迎加我微信进行交流 x
 
 ![wechat](wechat.jpg)
