@@ -1,7 +1,5 @@
 # Android-So-Handler
 
-## 此仓库说明
-
 ### Jitpack 接入方式
 
 [![](https://jitpack.io/v/mcxinyu/Android-So-Handler.svg)](https://jitpack.io/#mcxinyu/Android-So-Handler)
