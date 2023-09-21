@@ -70,22 +70,22 @@ abstract class SoFilePlugin : Plugin<Project> {
         }
         //endregion
 
-        val dep = project.dependencies.add(
-            p7zConfig.name, mapOf<String, String>(
-                "group" to "com.mainlxl.tools",
-                "name" to "p7z",
-                "classifier" to osdetector.classifier,
-                "version" to "1.0.1",
-                "ext" to "exe"
-            )
-        )
-        runCatching {
-            val file = p7zConfig.fileCollection(dep).singleFile
-            if (!file.canExecute() && !file.setExecutable(true)) {
-                throw GradleException("Cannot set ${file} as executable")
-            }
-            return file.absolutePath
-        }
+//        val dep = project.dependencies.add(
+//            p7zConfig.name, mapOf<String, String>(
+//                "group" to "com.mainlxl.tools",
+//                "name" to "p7z",
+//                "classifier" to osdetector.classifier,
+//                "version" to "1.0.1",
+//                "ext" to "exe"
+//            )
+//        )
+//        runCatching {
+//            val file = p7zConfig.fileCollection(dep).singleFile
+//            if (!file.canExecute() && !file.setExecutable(true)) {
+//                throw GradleException("Cannot set ${file} as executable")
+//            }
+//            return file.absolutePath
+//        }
         // 兜底使用系统环境变量配置的7z命令
         val os = System.getenv("OS")?.lowercase()
         if (os != null && os.contains("windows")) {
