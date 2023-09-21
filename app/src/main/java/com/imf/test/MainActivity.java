@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        checkSoLoad();
         fullScreen();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -37,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.image);
         updateCacheDir();
         TextView tv = findViewById(R.id.sample_text);
-        checkSoLoad();
         tv.setOnClickListener(v -> {
             StringBuilder stringBuilder = new StringBuilder();
             v.postDelayed(new Runnable() {
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateCacheDir() {
-        mCache.setText(new StringBuilder().append("缓存目录情况:\n").append(getDirInfo(getJniLibs())));
+        mCache.setText(new StringBuilder().append("缓存目录情况:\n").append(getDirInfo(getJniLibs(), "")));
     }
 
     public void onClearSoFile(View view) {
@@ -136,19 +136,19 @@ public class MainActivity extends AppCompatActivity {
         return dir.delete();
     }
 
-    private String getDirInfo(File file) {
+    private String getDirInfo(File file, String startStr) {
         if (file.isDirectory()) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(file.getName()).append("(dir):[\n");
             File[] children = file.listFiles();
             for (int i = 0; i < children.length; i++) {
                 File child = children[i];
-                stringBuilder.append(getDirInfo(child)).append("\n");
+                stringBuilder.append(getDirInfo(child, startStr + "\t\t")).append("\n");
             }
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-            return stringBuilder.insert(0, "\t- ").append(" ]").toString();
+            return stringBuilder.insert(0, startStr + "\t- ").append(" ]").toString();
         } else {
-            return "\t\t* " + file.getName();
+            return startStr + "\t\t* " + file.getName();
         }
     }
 

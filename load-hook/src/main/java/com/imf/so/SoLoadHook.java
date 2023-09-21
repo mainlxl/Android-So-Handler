@@ -6,12 +6,10 @@ package com.imf.so;
  * @Description: so库加载代理
  */
 public class SoLoadHook {
-    public static SoLoadProxy DEFAULT_SYSTEM_LOAD = new DefaultSoLoadProxy();
-    private static SoLoadProxy sSoLoadProxy = DEFAULT_SYSTEM_LOAD;
+    private static volatile SoLoadProxy sSoLoadProxy = new DefaultSoLoadProxy();
 
     public static void setSoLoadProxy(SoLoadProxy soLoadProxy) {
         if (soLoadProxy == null) {
-            sSoLoadProxy = DEFAULT_SYSTEM_LOAD;
             return;
         }
         sSoLoadProxy = soLoadProxy;

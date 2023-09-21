@@ -90,6 +90,6 @@ SoLoadHookConfig {
 //    excludePackage = ['com.imf.test']
 }
 dependencies {
-    implementation "com.imf.so:load-hook:${SO_PLUGIN_VERSION}"
-    implementation "com.imf.so:load-assets-7z:${SO_PLUGIN_VERSION}"
+    implementation "${GROUP_ID}:load-hook:${SO_PLUGIN_VERSION}"
+    implementation "${GROUP_ID}:load-assets-7z:${SO_PLUGIN_VERSION}"
 }

@@ -9,9 +9,8 @@ android {
     compileSdk 33
     defaultConfig {
         applicationId "com.imf.test"
-        minSdkVersion 14
-        //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -29,18 +28,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
-//    flavorDimensions "default"
-//    productFlavors {
-//        ioTestV7a {
-//            dimension "default"
-//            ndk.abiFilters("armeabi-v7a")
-//        }
-//        ioTestV8a {
-//            dimension "default"
-//            ndk.abiFilters("arm64-v8a")
-//        }
-//    }
 
     sourceSets {
         main {
