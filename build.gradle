@@ -2,6 +2,7 @@
 buildscript {
     repositories {
         maven { url uri("${rootDir}/maven") }
+        maven { url uri("${rootDir}/maven-p7z") }
         mavenLocal()
         mavenCentral()
         maven { url "https://jitpack.io" }

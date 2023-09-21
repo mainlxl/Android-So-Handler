@@ -3,6 +3,6 @@ include ':load-hook'
 include ':file-plugin'
 include ':android-un7z'
 include ':load-assets-7z'
-include ':p7z'
+//include ':p7z'
 include ':app', ':testLibrary'
 rootProject.name = "Android-So-Handler"

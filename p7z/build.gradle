@@ -5,7 +5,7 @@ publishing {
     publications {
         p7z(MavenPublication) {
             artifactId project.name
-            groupId GROUP_ID
+            groupId "com.mainlxl.tools"
             /**
              * 需同步跟随com.imf.plugin.so.SoFilePlugin#find7zPath
              * 种版本
@@ -50,7 +50,7 @@ publishing {
     }
     repositories {
         maven {
-            url = file("${project.rootDir}/maven")
+            url = file("${project.rootDir}/maven-p7z")
         }
     }
 }

@@ -50,7 +50,7 @@ abstract class SoFilePlugin : Plugin<Project> {
         //region 尝试查找 aar 里面的可执行文件
         val depAAR = project.dependencies.add(
             p7zConfig.name, mapOf(
-                "group" to "com.github.mainlxl.Android-So-Handler",
+                "group" to "com.github.mainlxl",
                 "name" to "p7z",
                 "classifier" to "all",
                 "version" to "1.0.1",
@@ -72,7 +72,7 @@ abstract class SoFilePlugin : Plugin<Project> {
 
         val dep = project.dependencies.add(
             p7zConfig.name, mapOf<String, String>(
-                "group" to "com.github.mainlxl.Android-So-Handler",
+                "group" to "com.mainlxl.tools",
                 "name" to "p7z",
                 "classifier" to osdetector.classifier,
                 "version" to "1.0.1",
