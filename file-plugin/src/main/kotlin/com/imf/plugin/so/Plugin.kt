@@ -72,7 +72,7 @@ abstract class SoFilePlugin : Plugin<Project> {
 
         val dep = project.dependencies.add(
             p7zConfig.name, mapOf<String, String>(
-                "group" to "com.mainlxl.tools",
+                "group" to "com.github.mainlxl.Android-So-Handler",
                 "name" to "p7z",
                 "classifier" to osdetector.classifier,
                 "version" to "1.0.1",
