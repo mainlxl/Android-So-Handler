@@ -47,9 +47,32 @@ abstract class SoFilePlugin : Plugin<Project> {
 
         val osdetector = project.extensions.getByType(OsDetector::class.java)
 
+        //region 尝试查找 aar 里面的可执行文件
+        val depAAR = project.dependencies.add(
+            p7zConfig.name, mapOf(
+                "group" to "com.github.mainlxl.Android-So-Handler",
+                "name" to "p7z",
+                "classifier" to "all",
+                "version" to "1.0.1",
+                "ext" to "aar"
+            )
+        )
+        runCatching {
+            val aar = p7zConfig.fileCollection(depAAR).singleFile
+            ZipFile(aar).unzipTo(aar.parentFile)
+            val file = aar.parentFile.listFiles()?.firstOrNull {
+                it.name.contains(osdetector.classifier)
+            } ?: throw FileNotFoundException()
+            if (!file.canExecute() && !file.setExecutable(true)) {
+                throw GradleException("Cannot set ${file} as executable")
+            }
+            return file.absolutePath
+        }
+        //endregion
+
         val dep = project.dependencies.add(
             p7zConfig.name, mapOf<String, String>(
-                "group" to "com.github.mainlxl.Android-So-Handler",
+                "group" to "com.mainlxl.tools",
                 "name" to "p7z",
                 "classifier" to osdetector.classifier,
                 "version" to "1.0.1",

@@ -1,0 +1,81 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.github.mainlxl.Android-So-Handler",
+    "module": "load-assets-7z",
+    "version": "0.0.12",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.5.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "load-assets-7z-0.0.12.aar",
+          "url": "load-assets-7z-0.0.12.aar",
+          "size": 17849,
+          "sha512": "3b489b5e0d09a62f863f989ba49b0063838d0be12ef91ab43d34e539bf6b473b8f74606bc06680b19df04667e5f3cbcf369823a0017b3c34fc058871624ae10d",
+          "sha256": "c490b3816eeeeb2279d5eddd98f5f73f36911815e594476d503826dc5b45c903",
+          "sha1": "f7d5343587e8119beb131151a40b938bf950ae89",
+          "md5": "75a15226aed94de80ac212e831f13e2a"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.mainlxl.Android-So-Handler",
+          "module": "load-hook",
+          "version": {
+            "requires": "0.0.12"
+          }
+        },
+        {
+          "group": "com.github.mainlxl.Android-So-Handler",
+          "module": "android-un7z",
+          "version": {
+            "requires": "0.0.12"
+          }
+        },
+        {
+          "group": "com.android.tools",
+          "module": "annotations",
+          "version": {
+            "requires": "30.4.2"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "load-assets-7z-0.0.12.aar",
+          "url": "load-assets-7z-0.0.12.aar",
+          "size": 17849,
+          "sha512": "3b489b5e0d09a62f863f989ba49b0063838d0be12ef91ab43d34e539bf6b473b8f74606bc06680b19df04667e5f3cbcf369823a0017b3c34fc058871624ae10d",
+          "sha256": "c490b3816eeeeb2279d5eddd98f5f73f36911815e594476d503826dc5b45c903",
+          "sha1": "f7d5343587e8119beb131151a40b938bf950ae89",
+          "md5": "75a15226aed94de80ac212e831f13e2a"
+        }
+      ]
+    }
+  ]
+}

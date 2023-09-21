@@ -1,5 +1,5 @@
 jdk:
   - openjdk11
 install:
-  - sh uploadAllToMavenLocal.sh
+#  - sh uploadAllToMavenLocal.sh
 

@@ -8,7 +8,7 @@ package com.imf.so;
 public class SoLoadHook {
     private static volatile SoLoadProxy sSoLoadProxy = new DefaultSoLoadProxy();
 
-    public static void setSoLoadProxy(SoLoadProxy soLoadProxy) {
+    public static synchronized void setSoLoadProxy(SoLoadProxy soLoadProxy) {
         if (soLoadProxy == null) {
             return;
         }

@@ -92,4 +92,9 @@ SoLoadHookConfig {
 dependencies {
     implementation "${GROUP_ID}:load-hook:${SO_PLUGIN_VERSION}"
     implementation "${GROUP_ID}:load-assets-7z:${SO_PLUGIN_VERSION}"
+
+    //调试时源码使用
+//    implementation project(':load-hook')
+//    implementation project(':load-assets-7z')
+
 }

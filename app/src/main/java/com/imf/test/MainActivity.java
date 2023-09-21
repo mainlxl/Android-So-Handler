@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         checkSoLoad();
+        loadSourceLib();
         fullScreen();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -40,19 +41,14 @@ public class MainActivity extends AppCompatActivity {
         TextView tv = findViewById(R.id.sample_text);
         tv.setOnClickListener(v -> {
             StringBuilder stringBuilder = new StringBuilder();
-            v.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    loadSourceLib();
-                    stringBuilder.append("源码引入: ").append(NativeSourceTest.stringFromJNI()).append('\n');
-                    stringBuilder.append("aar引入: ").append(NativeLibTest.stringFromJNI()).append('\n');
-                    stringBuilder.append("子工程引入: ").append(NativeTestLibrary.stringFromJNI()).append('\n');
-                    stringBuilder.append("Maven引入: >背景图片变模糊<");
-                    tv.setText(stringBuilder.toString());
-                    image.setImageBitmap(BitmapBlur.blur(bitmap, 9));
-                    updateCacheDir();
-                }
-            }, 100);
+            loadSourceLib();
+            stringBuilder.append("源码引入: ").append(NativeSourceTest.stringFromJNI()).append('\n');
+            stringBuilder.append("aar引入: ").append(NativeLibTest.stringFromJNI()).append('\n');
+            stringBuilder.append("子工程引入: ").append(NativeTestLibrary.stringFromJNI()).append('\n');
+            stringBuilder.append("Maven引入: >背景图片变模糊<");
+            tv.setText(stringBuilder.toString());
+            image.setImageBitmap(BitmapBlur.blur(bitmap, 9));
+            updateCacheDir();
         });
 
     }
@@ -83,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadSourceLib() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {

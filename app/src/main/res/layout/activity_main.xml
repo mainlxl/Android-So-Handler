@@ -26,6 +26,7 @@
             android:background="#c7edcc"
             android:padding="10dp"
             android:text="缓存目录情况:"
+            android:textSize="8dp"
             android:textColor="#333333"
             android:textStyle="normal" />
 

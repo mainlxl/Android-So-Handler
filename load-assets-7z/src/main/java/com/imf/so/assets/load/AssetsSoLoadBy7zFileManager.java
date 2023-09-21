@@ -16,6 +16,7 @@ import com.imf.so.assets.load.bean.AbiSoFileConfigInfo;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +28,11 @@ import java.util.Map;
 public class AssetsSoLoadBy7zFileManager {
     public final static String DIR_JNI_LIBS = "jniLibs";
     public final static String ASSETS_CONFIG_INFO_PATH = "jniLibs/info.json";
-    private static Context sAppContext;
-    private static File sSaveLibsDir;
-    private static AbiSoFileConfigInfo sSoLoadInfo;
+    private static volatile Context sAppContext;
+    private static volatile File sSaveLibsDir;
+    private static volatile AbiSoFileConfigInfo sSoLoadInfo;
 
-    private static final Map<String, Object> sLoadingLibraries = new HashMap<>();
+    private static final Map<String, Object> sLoadingLibraries = Collections.synchronizedMap(new HashMap<>());
 
     public static void setLogEnable(boolean enable) {
         LogUtil.setLogEnable(enable);

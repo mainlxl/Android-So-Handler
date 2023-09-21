@@ -5,7 +5,7 @@ publishing {
     publications {
         p7z(MavenPublication) {
             artifactId project.name
-            groupId GROUP_ID
+            groupId "com.mainlxl.tools"
             /**
              * 需同步跟随com.imf.plugin.so.SoFilePlugin#find7zPath
              * 种版本
@@ -38,6 +38,13 @@ publishing {
             artifact("executable/p7z-osx-aarch_64.exe") {
                 classifier "osx-aarch_64"
                 extension "exe"
+            }
+            /**
+             * 适配jitpack
+             */
+            artifact("executable/p7z.aar") {
+                classifier "all"
+                extension "aar"
             }
         }
     }
