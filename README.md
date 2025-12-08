@@ -227,6 +227,4 @@ SoLoadHookPlugin~~, 使用 ApkSoFileAdjustPlugin
 
 
 
-感谢[mcxinyu](https://github.com/mcxinyu)的贡献。也欢迎加我微信进行交流 x
-
-![wechat](wechat.jpg)
+感谢[mcxinyu](https://github.com/mcxinyu)的贡献。
