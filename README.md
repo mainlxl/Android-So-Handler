@@ -56,13 +56,9 @@ dependencies {
 |:-----------------:|:---------------:|:---------:|:--------------:|:---------:|
 |   RTCStatistics   |  1331kb(1.3M)   |   958kb   | 2752kb(2.68M)  |    109    |
 | flutter(Debug 版本) | 10,547kb(10.3M) |  6360kb   | 23358kb(22.8M) |    700    |
-| bd_idl_pass_token |      9.6k       |    8kb    |      17kb      |     3     |
-|    idl_license    |     63.3kb      |   51kb    |     113kb      |     6     |
-|      FaceSDK      |     269.5kb     |   220kb   |     450kb      |    25     |
-|     turbonet      | 1,638.4kb(1.6M) |  1258kb   |     2737kb     |    167    |
-|   gnustl_shared   |     273.7kb     |   195kb   |     693kb      |    28     |
-|    xiaoyuhost     |     426.9kb     |   309kb   |   1009kb(1M)   |    48     |
-|    crab_native    |     57.7kb      |   44kb    |     109kb      |     7     |
+| xxx1 |      9.6k       |    8kb    |      17kb      |     3     |
+|    xxx2    |     63.3kb      |   51kb    |     113kb      |     6     |
+|      xxx3      |     269.5kb     |   220kb   |     450kb      |    25     |
 
 > **apk 包中所占大小:** apk 属于 zip 压缩 所以 apk 包中已经为 zip 压缩后大小
 >
